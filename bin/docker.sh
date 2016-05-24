@@ -22,11 +22,8 @@ ci ()
 # dependencies, creating intermediate build artifacts in a build container, etc.
 build ()
 {
-  echo "Pulling envconsul dependency"
-  make get_envconsul
-  echo "Building the go binary for azure_arm_proxy"
-  make build
   echo "Building Docker image rightscale/$app_name:$1"
+  echo "docker build --build-arg gitref=$gitref --tag rightscale/$app_name:$1"
   docker build --build-arg gitref=$gitref --tag rightscale/$app_name:$1 .
   return $?
 }
