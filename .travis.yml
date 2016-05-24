@@ -8,6 +8,4 @@ go:
 before_install:
   - sudo apt-get update -qq && sudo apt-get -y --force-yes -o Dpkg::Options::="--force-confnew" install $APT_DOCKER_PKG && docker -v
 
-install: make depend
-
 script: bin/docker.sh ci $TRAVIS_BRANCH $TRAVIS_PULL_REQUEST
