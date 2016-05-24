@@ -80,3 +80,8 @@ upstream azure_v2  {
 tar zxvf binary/azure_v2-linux-amd64.tgz
 nohup ./azure_v2 --listen="localhost:8083" --prefix="/azure_v2" > ./azure_v2.log 2>&1 &
 ```
+
+## License
+
+The `azure_arm_proxy` source code is subject the MIT license,
+see the [LICENSE](https://github.com/rightscale/azure_arm_proxy/edit/master/LICENSE) file.
