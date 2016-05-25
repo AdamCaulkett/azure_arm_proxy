@@ -1,0 +1,18 @@
+version: '2'
+
+services:
+  proxy1:
+    build: .
+    command: /root/binary/azure_v2/azure_v2 --listen="localhost:8083" --prefix="/azure_v2" > /dev/null
+    ports:
+      - "8083:8083"
+  proxy2:
+    build: .
+    command: /root/binary/azure_v2/azure_v2 --listen="localhost:8084" --prefix="/azure_v2" > /dev/null
+    ports:
+      - "8084:8084"
+  proxy3:
+    build: .
+    command: /root/binary/azure_v2/azure_v2 --listen="localhost:8085" --prefix="/azure_v2" > /dev/null
+    ports:
+      - "8085:8085"
