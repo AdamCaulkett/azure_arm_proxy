@@ -58,6 +58,8 @@ pull ()
 # Push a named tag of this repo's image to DockerHub. This is a nearly-useless shortcut.
 push ()
 {
+  login
+
   echo "Pushing Docker image rightscale/$app_name:$1"
   docker push rightscale/$app_name:$1
   return $?
