@@ -1,7 +1,7 @@
 FROM rightscale/ops_os_base
 
 MAINTAINER slava@rightscale.com
-ENV LOG_TYPE=syslog
+ENV LOG_TYPE=stdout
 
 RUN mkdir -p /root/binary
 WORKDIR /root/binary
