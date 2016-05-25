@@ -5,7 +5,6 @@ import (
 
 	"github.com/labstack/echo"
 	em "github.com/labstack/echo/middleware"
-	"github.com/rightscale/go_middleware"
 
 	// load app files
 	"github.com/rightscale/azure_arm_proxy/config"
@@ -27,9 +26,6 @@ func httpServer() *echo.Echo {
 
 	// Setup middleware
 	e := echo.New()
-	e.Use(middleware.RequestID)                 // Put that first so loggers can log request id
-	e.Use(em.Logger())                          // Log to console
-	e.Use(middleware.HttpLogger(config.Logger)) // Log to syslog
 	e.Use(am.AzureClientInitializer())
 	e.Use(em.Recover())
 

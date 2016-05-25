@@ -1,11 +1,14 @@
 package config
 
 import (
-	"log"
-	"log/syslog"
+	"fmt"
 	"os"
 
+	"github.com/rightscale/rslog"
+
 	"gopkg.in/alecthomas/kingpin.v1"
+	"gopkg.in/inconshreveable/log15.v2"
+	log "gopkg.in/inconshreveable/log15.v2"
 )
 
 const (
@@ -17,6 +20,10 @@ const (
 	MediaType = "application/json"
 	// UserAgent is a RS request sign
 	UserAgent = "RightScale Self-Service Plugin"
+	// SyslogAddr is the address to use for connecting to syslog.
+	SyslogAddr = "syslog:514"
+	// ApplicationName is, you know, the name of the application
+	ApplicationName = "azure_arm_proxy"
 )
 
 var (
@@ -44,7 +51,7 @@ var (
 	// AuthHost is endpoint to authentication Azure service
 	AuthHost = "https://login.windows.net"
 	// Logger is Global syslog logger
-	Logger *log.Logger
+	Logger log15.Logger
 	// DebugMode is used to manage debug mode
 	DebugMode = false
 )
@@ -54,12 +61,32 @@ func init() {
 	app.Version(version)
 	app.Parse(os.Args[1:])
 
-	// Initialize global syslog logger
-	if l, err := syslog.NewLogger(syslog.LOG_NOTICE|syslog.LOG_LOCAL0, 0); err != nil {
-		panic("azure: failed to initialize syslog logger: " + err.Error())
+	Logger = log15.New()
+	logType := os.Getenv("LOG_TYPE")
+	var handler log.Handler
+	if logType == "" {
+		fmt.Errorf("Environment LOG_TYPE is not set")
+		return
 	} else {
-		Logger = l
+		Logger.Info("config loaded", "LogType", logType)
 	}
+	switch logType {
+	case "stdout":
+		handler = log.StreamHandler(os.Stdout, rslog.SimpleFormat(true))
+	case "syslog":
+		// We use the TCP syslog handler, there is no option!
+		h, err := rslog.NewTCPSyslogHandler(SyslogAddr, ApplicationName)
+		if err != nil {
+			kingpin.Fatalf(err.Error())
+		}
+		handler = h
+	case "none":
+		// no handler
+	default:
+		kingpin.Fatalf("Unknown log type: %s", logType)
+	}
+
+	Logger.SetHandler(handler)
 
 	switch *Env {
 	case "development":
