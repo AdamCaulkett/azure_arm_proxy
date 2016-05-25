@@ -8,7 +8,7 @@ import (
 	. "github.com/onsi/gomega"
 
 	"github.com/onsi/gomega/ghttp"
-	"github.com/rightscale/self-service-plugins/azure_v2/config"
+	"github.com/rightscale/azure_arm_proxy/config"
 )
 
 const (

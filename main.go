@@ -8,10 +8,10 @@ import (
 	"github.com/rightscale/go_middleware"
 
 	// load app files
-	"github.com/rightscale/self-service-plugins/azure_v2/config"
-	eh "github.com/rightscale/self-service-plugins/azure_v2/error_handler"
-	am "github.com/rightscale/self-service-plugins/azure_v2/middleware"
-	"github.com/rightscale/self-service-plugins/azure_v2/resources"
+	"github.com/rightscale/azure_arm_proxy/config"
+	eh "github.com/rightscale/azure_arm_proxy/error_handler"
+	am "github.com/rightscale/azure_arm_proxy/middleware"
+	"github.com/rightscale/azure_arm_proxy/resources"
 )
 
 func main() {

@@ -10,10 +10,10 @@ import (
 	em "github.com/labstack/echo/middleware"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"github.com/rightscale/azure_arm_proxy/config"
+	eh "github.com/rightscale/azure_arm_proxy/error_handler"
+	am "github.com/rightscale/azure_arm_proxy/middleware"
 	gm "github.com/rightscale/go_middleware"
-	"github.com/rightscale/self-service-plugins/azure_v2/config"
-	eh "github.com/rightscale/self-service-plugins/azure_v2/error_handler"
-	am "github.com/rightscale/self-service-plugins/azure_v2/middleware"
 
 	"testing"
 )

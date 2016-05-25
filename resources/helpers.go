@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo"
-	eh "github.com/rightscale/self-service-plugins/azure_v2/error_handler"
+	eh "github.com/rightscale/azure_arm_proxy/error_handler"
 )
 
 // GetAzureClient retrieves client initialized by middleware, send error response if not found

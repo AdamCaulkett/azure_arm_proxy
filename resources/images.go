@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/labstack/echo"
-	"github.com/rightscale/self-service-plugins/azure_v2/config"
+	"github.com/rightscale/azure_arm_proxy/config"
 )
 
 const (

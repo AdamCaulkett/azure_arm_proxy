@@ -11,8 +11,8 @@ import (
 	"strings"
 
 	"github.com/labstack/echo"
-	"github.com/rightscale/self-service-plugins/azure_v2/config"
-	eh "github.com/rightscale/self-service-plugins/azure_v2/error_handler"
+	"github.com/rightscale/azure_arm_proxy/config"
+	eh "github.com/rightscale/azure_arm_proxy/error_handler"
 )
 
 // AzureResource is interface which should support every resource in order to use generic functions List/Get/Create/Delete
