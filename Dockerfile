@@ -1,4 +1,6 @@
-FROM ubuntu:12.04
+FROM rightscale/ops_os_base
+
+MAINTAINER slava@rightscale.com
 
 RUN mkdir -p /root/binary
 WORKDIR /root/binary

@@ -8,7 +8,7 @@ go:
 before_install:
   - sudo apt-get update -qq && sudo apt-get -y --force-yes -o Dpkg::Options::="--force-confnew" install $DOCKER_APT_PKG=$DOCKER_APT_PKG_VERSION && docker -v
 
-install:
-  - rm -rf binary && go get && make build
+# install:
+#   - rm -rf binary && go get && make build
 
 script: bin/docker.sh ci $TRAVIS_BRANCH $TRAVIS_PULL_REQUEST
