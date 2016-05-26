@@ -7,7 +7,7 @@ WORKDIR /srv/azure_arm_proxy
 COPY bin/entrypoint.sh /srv/azure_arm_proxy/entrypoint.sh
 COPY binary /srv/azure_arm_proxy/binary
 RUN tar zxvf /srv/azure_arm_proxy/binary/azure_v2-linux-amd64.tgz
-EXPOSE 8083 8084 8085
+EXPOSE 8083
 CMD ["web"]
 ENTRYPOINT ["./entrypoint.sh"]
 
