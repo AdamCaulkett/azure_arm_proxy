@@ -23,7 +23,6 @@ ci ()
 build ()
 {
   echo "Building Docker image rightscale/$app_name:$1"
-  echo "docker build --build-arg gitref=$gitref --tag rightscale/$app_name:$1"
   docker build --build-arg gitref=$gitref --tag rightscale/$app_name:$1 .
   return $?
 }
