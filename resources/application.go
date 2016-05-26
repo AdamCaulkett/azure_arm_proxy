@@ -31,6 +31,12 @@ type servicePrincipal struct {
 func SetupAuthRoutes(e *echo.Group) {
 	e.Post("/application/register", assignRoleToApp)
 	e.Delete("/application/unregister", unassignRoleFromApp)
+	e.Get("/health-check", healthCheck)
+}
+
+// Respond with a simple healthy check for load balancers
+func healthCheck(c *echo.Context) error {
+	return c.JSON(200, "OK")
 }
 
 //Assign RBAC role to Application
