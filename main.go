@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"net/http"
 
 	"github.com/labstack/echo"
 	em "github.com/labstack/echo/middleware"
@@ -36,6 +37,7 @@ func httpServer() *echo.Echo {
 	e.SetHTTPErrorHandler(eh.AzureErrorHandler(e)) // override default error handler
 
 	// Setup routes
+	e.Get("/health-check", healthCheck)
 	prefix := e.Group(*config.AppPrefix) // added prefix to use multiple nginx location on one SS box
 	resources.SetupSubscriptionRoutes(prefix)
 	resources.SetupInstanceRoutes(prefix)
@@ -59,4 +61,8 @@ func httpServer() *echo.Echo {
 	resources.SetupEventsRoutes(prefix)
 
 	return e
+}
+
+func healthCheck(c *echo.Context) error {
+	return c.String(http.StatusOK, "Ok")
 }

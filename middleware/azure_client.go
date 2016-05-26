@@ -44,6 +44,9 @@ type AuthResponse struct {
 func AzureClientInitializer() echo.Middleware {
 	return func(h echo.HandlerFunc) echo.HandlerFunc {
 		return func(c *echo.Context) error {
+			if c.Request().RequestURI == "/health-check" {
+				return h(c)
+			}
 			accessToken, err := getAccessToken(c)
 			if err != nil {
 				return err
