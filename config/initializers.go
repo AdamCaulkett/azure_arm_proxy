@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/rightscale/rslog"
@@ -34,6 +33,8 @@ var (
 	Env = app.Flag("env", "Environment name: 'development' (default) or 'production'.").Default("development").String()
 	// AppPrefix is URL prefix
 	AppPrefix = app.Flag("prefix", "URL prefix.").Default("").String()
+	// LogType could be: stdout or syslog
+	LogType = app.Flag("log_type", "Type of Logger.").Default("stdout").String()
 	// ClientIDCred is the client id of the application that is registered in Azure Active Directory.
 	ClientIDCred = app.Arg("client", "The client id of the application that is registered in Azure Active Directory.").String()
 	// ClientSecretCred is the client key of the application that is registered in Azure Active Directory.
@@ -62,15 +63,9 @@ func init() {
 	app.Parse(os.Args[1:])
 
 	Logger = log15.New()
-	logType := os.Getenv("LOG_TYPE")
 	var handler log.Handler
-	if logType == "" {
-		fmt.Errorf("Environment LOG_TYPE is not set")
-		return
-	} else {
-		Logger.Info("config loaded", "LogType", logType)
-	}
-	switch logType {
+	Logger.Info("config loaded", "LogType", *LogType)
+	switch *LogType {
 	case "stdout":
 		handler = log.StreamHandler(os.Stdout, rslog.SimpleFormat(true))
 	case "syslog":
@@ -80,10 +75,8 @@ func init() {
 			kingpin.Fatalf(err.Error())
 		}
 		handler = h
-	case "none":
-		// no handler
 	default:
-		kingpin.Fatalf("Unknown log type: %s", logType)
+		kingpin.Fatalf("Unknown log type: %s", *LogType)
 	}
 
 	Logger.SetHandler(handler)

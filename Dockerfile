@@ -1,7 +1,6 @@
 FROM rightscale/ops_os_base
 
 MAINTAINER slava@rightscale.com
-ENV LOG_TYPE=stdout
 
 WORKDIR /srv/azure_arm_proxy
 COPY bin/entrypoint.sh /srv/azure_arm_proxy/entrypoint.sh
