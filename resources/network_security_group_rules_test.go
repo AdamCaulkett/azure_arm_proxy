@@ -12,8 +12,8 @@ import (
 )
 
 const (
-	listNSGRsResponse   = `{"value":[{"etag":"W/\"f16517fd-a1f6-449d-a77c-06ef63318423\"","href":"/resource_groups/Group-1/network_security_groups/khrvi2/network_security_group_rules/khrvi2_1","id":"/subscriptions/test/resourceGroups/Group-1/providers/Microsoft.Network/networkSecurityGroups/khrvi2/securityRules/khrvi2_1","name":"khrvi2_1","properties":{"access":"Allow","description":"test","destinationAddressPrefix":"*","destinationPortRange":"800","direction":"Inbound","priority":100,"protocol":"Tcp","provisioningState":"Succeeded","sourceAddressPrefix":"*","sourcePortRange":"800"}}]}`
-	listOneNSGRResponse = `{"id":"/subscriptions/test/resourceGroups/Group-1/providers/Microsoft.Network/networkSecurityGroups/khrvi2/securityRules/khrvi2_1","name":"khrvi2_1","etag":"W/\"f16517fd-a1f6-449d-a77c-06ef63318423\"","properties":{"access":"Allow","description":"test","destinationAddressPrefix":"*","destinationPortRange":"800","direction":"Inbound","priority":100,"protocol":"Tcp","provisioningState":"Succeeded","sourceAddressPrefix":"*","sourcePortRange":"800"},"href":"/resource_groups/Group-1/network_security_groups/khrvi2/network_security_group_rules/khrvi2_1"}`
+	listNSGRsResponse   = `{"value":[{"etag":"W/\"f16517fd-a1f6-449d-a77c-06ef63318423\"","href":"resource_groups/Group-1/network_security_groups/khrvi2/network_security_group_rules/khrvi2_1","id":"/subscriptions/test/resourceGroups/Group-1/providers/Microsoft.Network/networkSecurityGroups/khrvi2/securityRules/khrvi2_1","name":"khrvi2_1","properties":{"access":"Allow","description":"test","destinationAddressPrefix":"*","destinationPortRange":"800","direction":"Inbound","priority":100,"protocol":"Tcp","provisioningState":"Succeeded","sourceAddressPrefix":"*","sourcePortRange":"800"}}]}`
+	listOneNSGRResponse = `{"id":"/subscriptions/test/resourceGroups/Group-1/providers/Microsoft.Network/networkSecurityGroups/khrvi2/securityRules/khrvi2_1","name":"khrvi2_1","etag":"W/\"f16517fd-a1f6-449d-a77c-06ef63318423\"","properties":{"access":"Allow","description":"test","destinationAddressPrefix":"*","destinationPortRange":"800","direction":"Inbound","priority":100,"protocol":"Tcp","provisioningState":"Succeeded","sourceAddressPrefix":"*","sourcePortRange":"800"},"href":"resource_groups/Group-1/network_security_groups/khrvi2/network_security_group_rules/khrvi2_1"}`
 )
 
 var _ = Describe("network security group rules", func() {
@@ -178,7 +178,7 @@ var _ = Describe("network security group rules", func() {
 			Expect(err).NotTo(HaveOccurred())
 			Ω(do.ReceivedRequests()).Should(HaveLen(1))
 			Ω(response.Status).Should(Equal(404))
-			Ω(response.Body).Should(Equal("{\"Code\":404,\"Message\":\"Could not find resource with id: khrvi\"}\n"))
+			Ω(response.Body).Should(Equal("{\"Code\":404,\"Message\":\"Could not find resource with id: khrvi\"}"))
 		})
 	})
 
@@ -215,7 +215,7 @@ var _ = Describe("network security group rules", func() {
 		})
 
 		It("returns a resource network security group rule href in the 'Location' header", func() {
-			Ω(response.Headers["Location"][0]).Should(Equal("/resource_groups/Group-1/network_security_groups/khrvi2/network_security_group_rules/khrvi2_1"))
+			Ω(response.Headers["Location"][0]).Should(Equal("resource_groups/Group-1/network_security_groups/khrvi2/network_security_group_rules/khrvi2_1"))
 		})
 
 		It("return empty body", func() {

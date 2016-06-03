@@ -62,7 +62,7 @@ func listSubnets(c *echo.Context) error {
 	}
 	//add href for each subnet
 	for _, subnet := range subnets {
-		subnet["href"] = fmt.Sprintf("/resource_groups/%s/networks/%s/subnets/%s", groupName, networkID, subnet["name"])
+		subnet["href"] = fmt.Sprintf("resource_groups/%s/networks/%s/subnets/%s", groupName, networkID, subnet["name"])
 	}
 	return Render(c, 200, subnets, "vnd.rightscale.subnet+json;type=collection")
 }
@@ -85,7 +85,7 @@ func listAllSubnets(c *echo.Context) error {
 			return err
 		}
 		for _, subnet := range resp {
-			subnet["href"] = fmt.Sprintf("/resource_groups/%s/networks/%s/subnets/%s", groupName, networkID, subnet["name"])
+			subnet["href"] = fmt.Sprintf("resource_groups/%s/networks/%s/subnets/%s", groupName, networkID, subnet["name"])
 		}
 		subnets = append(subnets, resp...)
 	}

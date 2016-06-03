@@ -52,7 +52,13 @@ func getOperation(c *echo.Context) error {
 	} else if resp.StatusCode == 200 || resp.StatusCode == 204 {
 		responseParams.Status = "succeeded"
 	} else {
-		details := resp.Header.Get("Location")
+		var details string
+		if resp.StatusCode == 404 {
+			details = fmt.Sprintf("Could not find operation with id '%s'", c.Param("id"))
+		} else {
+			details = resp.Header.Get("Location")
+		}
+
 		responseParams.Details = fmt.Sprintf("Error has occurred while requesting async operation: %s", details)
 		responseParams.Status = "failed"
 	}

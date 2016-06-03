@@ -13,7 +13,6 @@ import (
 	"github.com/rightscale/azure_arm_proxy/config"
 	eh "github.com/rightscale/azure_arm_proxy/error_handler"
 	am "github.com/rightscale/azure_arm_proxy/middleware"
-	gm "github.com/rightscale/go_middleware"
 
 	"testing"
 )
@@ -119,27 +118,28 @@ func (c *AzureClient) do(verb, url, body string) (*Response, error) {
 func httpServer() *echo.Echo {
 	// Setup middleware
 	e := echo.New()
-	e.Use(gm.RequestID)                 // Put that first so loggers can log request id
-	e.Use(gm.HttpLogger(config.Logger)) // Log to syslog
+	// e.Use(gm.RequestID)                 // Put that first so loggers can log request id
+	// e.Use(gm.HttpLogger(config.Logger)) // Log to syslog
 	e.Use(am.AzureClientInitializer())
 	e.Use(em.Recover())
 
 	e.SetHTTPErrorHandler(eh.AzureErrorHandler(e)) // override default error handler
 	// Setup routes
-	SetupSubscriptionRoutes(e)
-	SetupInstanceRoutes(e)
-	SetupGroupsRoutes(e)
-	SetupStorageAccountsRoutes(e)
-	SetupProviderRoutes(e)
-	SetupNetworkRoutes(e)
-	SetupSubnetsRoutes(e)
-	SetupIPAddressesRoutes(e)
-	SetupAuthRoutes(e)
-	SetupNetworkInterfacesRoutes(e)
-	SetupOperationRoutes(e)
-	SetupAvailabilitySetRoutes(e)
-	SetupNetworkSecurityGroupRoutes(e)
-	SetupNetworkSecurityGroupRuleRoutes(e)
+	prefix := e.Group(*config.AppPrefix)
+	SetupSubscriptionRoutes(prefix)
+	SetupInstanceRoutes(prefix)
+	SetupGroupsRoutes(prefix)
+	SetupStorageAccountsRoutes(prefix)
+	SetupProviderRoutes(prefix)
+	SetupNetworkRoutes(prefix)
+	SetupSubnetsRoutes(prefix)
+	SetupIPAddressesRoutes(prefix)
+	SetupAuthRoutes(prefix)
+	SetupNetworkInterfacesRoutes(prefix)
+	SetupOperationRoutes(prefix)
+	SetupAvailabilitySetRoutes(prefix)
+	SetupNetworkSecurityGroupRoutes(prefix)
+	SetupNetworkSecurityGroupRuleRoutes(prefix)
 
 	return e
 }

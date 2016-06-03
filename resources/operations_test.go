@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	listOneOperationResponse = `{"operationId":"896da082-4e65-4d00-a1bc-8d86591949fc","status":"Succeeded","startTime":"2015-06-24T13:31:00.5643449+00:00","endTime":"2015-06-24T13:32:47.0028355+00:00","href":"/locations/westus/operations/896da082-4e65-4d00-a1bc-8d86591949fc"}`
+	listOneOperationResponse = `{"status":"succeeded","href":"locations/westus/operations/896da082-4e65-4d00-a1bc-8d86591949fc"}`
 )
 
 var _ = Describe("operations", func() {
@@ -40,7 +40,7 @@ var _ = Describe("operations", func() {
 					ghttp.RespondWith(http.StatusOK, listOneOperationResponse),
 				),
 			)
-			response, err = client.Get("/locations/westus/operations/896da082-4e65-4d00-a1bc-8d86591949fc")
+			response, err = client.Get("/locations/westus/services/microsoft.compute/operations/896da082-4e65-4d00-a1bc-8d86591949fc")
 		})
 
 		It("no error occured", func() {
@@ -76,12 +76,12 @@ var _ = Describe("operations", func() {
 			)
 		})
 
-		It("returns 404", func() {
-			response, err = client.Get("/locations/westus/operations/khrvi1")
+		It("returns 200 but inform about issue in the details", func() {
+			response, err = client.Get("/locations/westus/services/microsoft.compute/operations/khrvi1")
 			Expect(err).NotTo(HaveOccurred())
 			Ω(do.ReceivedRequests()).Should(HaveLen(1))
-			Ω(response.Status).Should(Equal(404))
-			Ω(response.Body).Should(Equal("{\"Code\":404,\"Message\":\"Could not find resource with id: khrvi1\"}\n"))
+			Ω(response.Status).Should(Equal(200))
+			Ω(response.Body).Should(Equal("{\"status\":\"failed\",\"details\":\"Error has occurred while requesting async operation: Could not find operation with id 'khrvi1'\",\"href\":\"locations/westus/operations/khrvi1\"}\n"))
 		})
 	})
 })

@@ -13,8 +13,8 @@ import (
 
 const (
 	listEmptyResponse = `{"value":[]}`
-	listASsResponse   = `{"value":[{"href":"/resource_groups/Group-3/availability_sets/khrvi1","id":"/subscriptions/test/resourceGroups/Group-3/providers/Microsoft.Compute/availabilitySets/khrvi1","location":"eastus","name":"khrvi1","properties":{"platformFaultDomainCount":3,"platformUpdateDomainCount":5,"virtualMachines":[]},"type":"Microsoft.Compute/availabilitySets"}]}`
-	listOneASResponse = `{"id":"/subscriptions/test/resourceGroups/Group-3/providers/Microsoft.Compute/availabilitySets/khrvi1","name":"khrvi1","location":"eastus","properties":{"platformFaultDomainCount":3,"platformUpdateDomainCount":5,"virtualMachines":[]},"href":"/resource_groups/Group-3/availability_sets/khrvi1"}`
+	listASsResponse   = `{"value":[{"href":"resource_groups/Group-3/availability_sets/khrvi1","id":"/subscriptions/test/resourceGroups/Group-3/providers/Microsoft.Compute/availabilitySets/khrvi1","location":"eastus","name":"khrvi1","properties":{"platformFaultDomainCount":3,"platformUpdateDomainCount":5,"virtualMachines":[]},"type":"Microsoft.Compute/availabilitySets"}]}`
+	listOneASResponse = `{"id":"/subscriptions/test/resourceGroups/Group-3/providers/Microsoft.Compute/availabilitySets/khrvi1","name":"khrvi1","location":"eastus","properties":{"platformFaultDomainCount":3,"platformUpdateDomainCount":5,"virtualMachines":[]},"href":"resource_groups/Group-3/availability_sets/khrvi1"}`
 )
 
 var _ = Describe("availability_sets", func() {
@@ -175,7 +175,7 @@ var _ = Describe("availability_sets", func() {
 			Expect(err).NotTo(HaveOccurred())
 			Ω(do.ReceivedRequests()).Should(HaveLen(1))
 			Ω(response.Status).Should(Equal(404))
-			Ω(response.Body).Should(Equal("{\"Code\":404,\"Message\":\"Could not find resource with id: khrvi\"}\n"))
+			Ω(response.Body).Should(Equal("{\"Code\":404,\"Message\":\"Could not find resource with id: khrvi\"}"))
 		})
 	})
 
@@ -204,7 +204,7 @@ var _ = Describe("availability_sets", func() {
 		})
 
 		It("returns a resource availability set href in the 'Location' header", func() {
-			Ω(response.Headers["Location"][0]).Should(Equal("/resource_groups/Group-3/availability_sets/khrvi1"))
+			Ω(response.Headers["Location"][0]).Should(Equal("resource_groups/Group-3/availability_sets/khrvi1"))
 		})
 
 		It("return empty body", func() {

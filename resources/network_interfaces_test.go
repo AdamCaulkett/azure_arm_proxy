@@ -12,8 +12,8 @@ import (
 )
 
 const (
-	listNIsResponse   = `{"value":[{"etag":"W/\"854ed6c8-3337-4617-a5a8-38aa5051957b\"","href":"/resource_groups/Group-1/network_interfaces/1_khrvi","id":"/subscriptions/test/resourceGroups/Group-1/providers/Microsoft.Network/networkInterfaces/1_khrvi","location":"westus","name":"1_khrvi","properties":{"dnsSettings":{"dnsServers":["10.1.0.5"]},"ipConfigurations":[{"etag":"W/\"854ed6c8-3337-4617-a5a8-38aa5051957b\"","id":"/subscriptions/test/resourceGroups/Group-1/providers/Microsoft.Network/networkInterfaces/1_khrvi/ipConfigurations/1_khrvi_ip","name":"1_khrvi_ip","properties":{"privateIPAddress":"10.0.0.106","privateIPAllocationMethod":"Dynamic","provisioningState":"Succeeded","subnet":{"id":"/subscriptions/test/resourceGroups/Group-1/providers/Microsoft.Network/virtualNetworks/khrvi/subnets/khrvi"}}}],"provisioningState":"Succeeded"}}]}`
-	listOneNIResponse = `{"id":"/subscriptions/test/resourceGroups/Group-1/providers/Microsoft.Network/networkInterfaces/1_khrvi","name":"1_khrvi","location":"westus","etag":"W/\"854ed6c8-3337-4617-a5a8-38aa5051957b\"","properties":{"dnsSettings":{"dnsServers":["10.1.0.5"]},"ipConfigurations":[{"etag":"W/\"854ed6c8-3337-4617-a5a8-38aa5051957b\"","id":"/subscriptions/test/resourceGroups/Group-1/providers/Microsoft.Network/networkInterfaces/1_khrvi/ipConfigurations/1_khrvi_ip","name":"1_khrvi_ip","properties":{"privateIPAddress":"10.0.0.106","privateIPAllocationMethod":"Dynamic","provisioningState":"Succeeded","subnet":{"id":"/subscriptions/test/resourceGroups/Group-1/providers/Microsoft.Network/virtualNetworks/khrvi/subnets/khrvi"}}}],"provisioningState":"Succeeded"},"href":"/resource_groups/Group-1/network_interfaces/1_khrvi"}`
+	listNIsResponse   = `{"value":[{"etag":"W/\"854ed6c8-3337-4617-a5a8-38aa5051957b\"","href":"resource_groups/Group-1/network_interfaces/1_khrvi","id":"/subscriptions/test/resourceGroups/Group-1/providers/Microsoft.Network/networkInterfaces/1_khrvi","location":"westus","name":"1_khrvi","properties":{"dnsSettings":{"dnsServers":["10.1.0.5"]},"ipConfigurations":[{"etag":"W/\"854ed6c8-3337-4617-a5a8-38aa5051957b\"","id":"/subscriptions/test/resourceGroups/Group-1/providers/Microsoft.Network/networkInterfaces/1_khrvi/ipConfigurations/1_khrvi_ip","name":"1_khrvi_ip","properties":{"privateIPAddress":"10.0.0.106","privateIPAllocationMethod":"Dynamic","provisioningState":"Succeeded","subnet":{"id":"/subscriptions/test/resourceGroups/Group-1/providers/Microsoft.Network/virtualNetworks/khrvi/subnets/khrvi"}}}],"provisioningState":"Succeeded"}}]}`
+	listOneNIResponse = `{"id":"/subscriptions/test/resourceGroups/Group-1/providers/Microsoft.Network/networkInterfaces/1_khrvi","name":"1_khrvi","location":"westus","etag":"W/\"854ed6c8-3337-4617-a5a8-38aa5051957b\"","properties":{"dnsSettings":{"dnsServers":["10.1.0.5"]},"ipConfigurations":[{"etag":"W/\"854ed6c8-3337-4617-a5a8-38aa5051957b\"","id":"/subscriptions/test/resourceGroups/Group-1/providers/Microsoft.Network/networkInterfaces/1_khrvi/ipConfigurations/1_khrvi_ip","name":"1_khrvi_ip","properties":{"privateIPAddress":"10.0.0.106","privateIPAllocationMethod":"Dynamic","provisioningState":"Succeeded","subnet":{"id":"/subscriptions/test/resourceGroups/Group-1/providers/Microsoft.Network/virtualNetworks/khrvi/subnets/khrvi"}}}],"provisioningState":"Succeeded"},"href":"resource_groups/Group-1/network_interfaces/1_khrvi"}`
 )
 
 var _ = Describe("network interfaces", func() {
@@ -170,7 +170,7 @@ var _ = Describe("network interfaces", func() {
 			Expect(err).NotTo(HaveOccurred())
 			Ω(do.ReceivedRequests()).Should(HaveLen(1))
 			Ω(response.Status).Should(Equal(404))
-			Ω(response.Body).Should(Equal("{\"Code\":404,\"Message\":\"Could not find resource with id: khrvi1\"}\n"))
+			Ω(response.Body).Should(Equal("{\"Code\":404,\"Message\":\"Could not find resource with id: khrvi1\"}"))
 		})
 	})
 
@@ -217,7 +217,7 @@ var _ = Describe("network interfaces", func() {
 		})
 
 		It("returns a resource network interface href in the 'Location' header", func() {
-			Ω(response.Headers["Location"][0]).Should(Equal("/resource_groups/Group-1/network_interfaces/1_khrvi"))
+			Ω(response.Headers["Location"][0]).Should(Equal("resource_groups/Group-1/network_interfaces/1_khrvi"))
 		})
 
 		It("return empty body", func() {
@@ -267,7 +267,7 @@ var _ = Describe("network interfaces", func() {
 		})
 
 		It("returns a resource network interface href in the 'Location' header", func() {
-			Ω(response.Headers["Location"][0]).Should(Equal("/resource_groups/Group-1/network_interfaces/1_khrvi"))
+			Ω(response.Headers["Location"][0]).Should(Equal("resource_groups/Group-1/network_interfaces/1_khrvi"))
 		})
 
 		It("return empty body", func() {

@@ -80,7 +80,7 @@ func listAllNetworkSecurityGroupRules(c *echo.Context) error {
 			return err
 		}
 		for _, rule := range resp {
-			rule["href"] = fmt.Sprintf("/resource_groups/%s/network_security_groups/%s/network_security_group_rules/%s", groupName, groupID, rule["name"])
+			rule["href"] = fmt.Sprintf("resource_groups/%s/network_security_groups/%s/network_security_group_rules/%s", groupName, groupID, rule["name"])
 		}
 		rules = append(rules, resp...)
 	}
@@ -97,7 +97,7 @@ func listNetworkSecurityGroupRules(c *echo.Context) error {
 	}
 	//add href for each rule
 	for _, rule := range rules {
-		rule["href"] = fmt.Sprintf("/resource_groups/%s/network_security_groups/%s/network_security_group_rules/%s", groupName, groupID, rule["name"])
+		rule["href"] = fmt.Sprintf("resource_groups/%s/network_security_groups/%s/network_security_group_rules/%s", groupName, groupID, rule["name"])
 	}
 	return Render(c, 200, rules, "vnd.rightscale.network_security_group_rule+json;type=collection")
 }
@@ -135,7 +135,7 @@ func listDefaultNetworkSecurityGroupRules(c *echo.Context) error {
 	}
 	//add href for each rule
 	for _, rule := range rules {
-		rule["href"] = fmt.Sprintf("/resource_groups/%s/networks/%s/network_security_group_rules/%s", groupName, groupID, rule["name"])
+		rule["href"] = fmt.Sprintf("resource_groups/%s/networks/%s/network_security_group_rules/%s", groupName, groupID, rule["name"])
 	}
 	return Render(c, 200, rules, "vnd.rightscale.network_security_group_rule+json;type=collection")
 }

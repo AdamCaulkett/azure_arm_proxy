@@ -12,8 +12,8 @@ import (
 )
 
 const (
-	listSubnetsResponse   = `{"value":[{"etag":"W/\"bfa01c55-48e2-41fc-8f0b-2189de29e495\"","href":"/resource_groups/Group-3/networks/khrvi-3/subnets/sub1","id":"/subscriptions/test/resourceGroups/Group-3/providers/Microsoft.Network/virtualNetworks/khrvi-3/subnets/sub1","name":"sub1","properties":{"addressPrefix":"10.0.0.0/16","provisioningState":"Succeeded"}}]}`
-	listOneSubnetResponse = `{"id":"/subscriptions/test/resourceGroups/Group-3/providers/Microsoft.Network/virtualNetworks/khrvi-3/subnets/sub1","name":"sub1","etag":"W/\"bfa01c55-48e2-41fc-8f0b-2189de29e495\"","properties":{"addressPrefix":"10.0.0.0/16","provisioningState":"Succeeded"}, "href": "/resource_groups/Group-3/networks/khrvi-3/subnets/sub1"}`
+	listSubnetsResponse   = `{"value":[{"etag":"W/\"bfa01c55-48e2-41fc-8f0b-2189de29e495\"","href":"resource_groups/Group-3/networks/khrvi-3/subnets/sub1","id":"/subscriptions/test/resourceGroups/Group-3/providers/Microsoft.Network/virtualNetworks/khrvi-3/subnets/sub1","name":"sub1","properties":{"addressPrefix":"10.0.0.0/16","provisioningState":"Succeeded"}}]}`
+	listOneSubnetResponse = `{"id":"/subscriptions/test/resourceGroups/Group-3/providers/Microsoft.Network/virtualNetworks/khrvi-3/subnets/sub1","name":"sub1","etag":"W/\"bfa01c55-48e2-41fc-8f0b-2189de29e495\"","properties":{"addressPrefix":"10.0.0.0/16","provisioningState":"Succeeded"}, "href": "resource_groups/Group-3/networks/khrvi-3/subnets/sub1"}`
 )
 
 var _ = Describe("subnets", func() {
@@ -177,7 +177,7 @@ var _ = Describe("subnets", func() {
 			Expect(err).NotTo(HaveOccurred())
 			Ω(do.ReceivedRequests()).Should(HaveLen(1))
 			Ω(response.Status).Should(Equal(404))
-			Ω(response.Body).Should(Equal("{\"Code\":404,\"Message\":\"Could not find resource with id: sub2\"}\n"))
+			Ω(response.Body).Should(Equal("{\"Code\":404,\"Message\":\"Could not find resource with id: sub2\"}"))
 		})
 	})
 
@@ -210,7 +210,7 @@ var _ = Describe("subnets", func() {
 		})
 
 		It("returns a resource subnet href in the 'Location' header", func() {
-			Ω(response.Headers["Location"][0]).Should(Equal("/resource_groups/Group-3/networks/khrvi-3/subnets/sub1"))
+			Ω(response.Headers["Location"][0]).Should(Equal("resource_groups/Group-3/networks/khrvi-3/subnets/sub1"))
 		})
 
 		It("return empty body", func() {

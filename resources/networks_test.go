@@ -12,8 +12,8 @@ import (
 )
 
 const (
-	listNetworksResponse   = `{"value":[{"etag":"W/\"b055718a-6d32-49e4-a4dd-d8bde3f84070\"","href":"/resource_groups/Group-3/networks/khrvi-3","id":"/subscriptions/test/resourceGroups/Group-3/providers/Microsoft.Network/virtualNetworks/khrvi-3","location":"westus","name":"khrvi-3","properties":{"addressSpace":{"addressPrefixes":["10.0.0.0/16"]},"provisioningState":"Succeeded","subnets":[{"etag":"W/\"b055718a-6d32-49e4-a4dd-d8bde3f84070\"","id":"/subscriptions/test/resourceGroups/Group-3/providers/Microsoft.Network/virtualNetworks/khrvi-3/subnets/khrvi-3","name":"khrvi-3","properties":{"addressPrefix":"10.0.0.0/16","provisioningState":"Succeeded"}}]}},{"etag":"W/\"2bc1c8a9-e9d1-4432-8b92-8e6c79d48e82\"","href":"/resource_groups/Group-3/networks/net2","id":"/subscriptions/test/resourceGroups/Group-3/providers/Microsoft.Network/virtualNetworks/net2","location":"westus","name":"net2","properties":{"addressSpace":{"addressPrefixes":["10.0.0.0/16"]},"dhcpOptions":{"dnsServers":["10.1.0.5","10.1.0.6"]},"provisioningState":"Succeeded"}}]}`
-	listOneNetworkResponse = `{"id":"/subscriptions/test/resourceGroups/Group-3/providers/Microsoft.Network/virtualNetworks/net2","name":"net2","location":"westus","etag":"W/\"2bc1c8a9-e9d1-4432-8b92-8e6c79d48e82\"","properties":{"addressSpace":{"addressPrefixes":["10.0.0.0/16"]},"dhcpOptions":{"dnsServers":["10.1.0.5","10.1.0.6"]},"provisioningState":"Succeeded"},"href":"/resource_groups/Group-3/networks/net2"}`
+	listNetworksResponse   = `{"value":[{"etag":"W/\"b055718a-6d32-49e4-a4dd-d8bde3f84070\"","href":"resource_groups/Group-3/networks/khrvi-3","id":"/subscriptions/test/resourceGroups/Group-3/providers/Microsoft.Network/virtualNetworks/khrvi-3","location":"westus","name":"khrvi-3","properties":{"addressSpace":{"addressPrefixes":["10.0.0.0/16"]},"provisioningState":"Succeeded","subnets":[{"etag":"W/\"b055718a-6d32-49e4-a4dd-d8bde3f84070\"","id":"/subscriptions/test/resourceGroups/Group-3/providers/Microsoft.Network/virtualNetworks/khrvi-3/subnets/khrvi-3","name":"khrvi-3","properties":{"addressPrefix":"10.0.0.0/16","provisioningState":"Succeeded"}}]}},{"etag":"W/\"2bc1c8a9-e9d1-4432-8b92-8e6c79d48e82\"","href":"resource_groups/Group-3/networks/net2","id":"/subscriptions/test/resourceGroups/Group-3/providers/Microsoft.Network/virtualNetworks/net2","location":"westus","name":"net2","properties":{"addressSpace":{"addressPrefixes":["10.0.0.0/16"]},"dhcpOptions":{"dnsServers":["10.1.0.5","10.1.0.6"]},"provisioningState":"Succeeded"}}]}`
+	listOneNetworkResponse = `{"id":"/subscriptions/test/resourceGroups/Group-3/providers/Microsoft.Network/virtualNetworks/net2","name":"net2","location":"westus","etag":"W/\"2bc1c8a9-e9d1-4432-8b92-8e6c79d48e82\"","properties":{"addressSpace":{"addressPrefixes":["10.0.0.0/16"]},"dhcpOptions":{"dnsServers":["10.1.0.5","10.1.0.6"]},"provisioningState":"Succeeded"},"href":"resource_groups/Group-3/networks/net2"}`
 )
 
 var _ = Describe("networks", func() {
@@ -169,7 +169,7 @@ var _ = Describe("networks", func() {
 			Expect(err).NotTo(HaveOccurred())
 			Ω(do.ReceivedRequests()).Should(HaveLen(1))
 			Ω(response.Status).Should(Equal(404))
-			Ω(response.Body).Should(Equal("{\"Code\":404,\"Message\":\"Could not find resource with id: khrvi\"}\n"))
+			Ω(response.Body).Should(Equal("{\"Code\":404,\"Message\":\"Could not find resource with id: khrvi\"}"))
 		})
 	})
 
@@ -204,7 +204,7 @@ var _ = Describe("networks", func() {
 		})
 
 		It("returns a resource network href in the 'Location' header", func() {
-			Ω(response.Headers["Location"][0]).Should(Equal("/resource_groups/Group-3/networks/net2"))
+			Ω(response.Headers["Location"][0]).Should(Equal("resource_groups/Group-3/networks/net2"))
 		})
 
 		It("return empty body", func() {
@@ -252,7 +252,7 @@ var _ = Describe("networks", func() {
 		})
 
 		It("returns a resource network href in the 'Location' header", func() {
-			Ω(response.Headers["Location"][0]).Should(Equal("/resource_groups/Group-3/networks/net2"))
+			Ω(response.Headers["Location"][0]).Should(Equal("resource_groups/Group-3/networks/net2"))
 		})
 
 		It("return empty body", func() {
