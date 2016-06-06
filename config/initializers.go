@@ -1,7 +1,10 @@
 package config
 
 import (
+	"io"
+	"log/syslog"
 	"os"
+	"strings"
 
 	"github.com/rightscale/rslog"
 
@@ -57,6 +60,44 @@ var (
 	DebugMode = false
 )
 
+// Copy/pasted from log15/handler.go so we can specify local0 facility
+type closingHandler struct {
+	io.WriteCloser
+	log15.Handler
+}
+
+// Copy/pasted from log15/syslog.go so we can specify local0 facility
+func newSyslogNetHandler(net, addr string, tag string, fmtr log15.Format) (log15.Handler, error) {
+	wr, err := syslog.Dial(net, addr, syslog.LOG_LOCAL0, tag)
+	return newSyslogHandler(fmtr, wr, err)
+}
+
+// Copy/pasted from log15/syslog.go so we can specify local0 facility
+func newSyslogHandler(fmtr log15.Format, sysWr *syslog.Writer, err error) (log15.Handler, error) {
+	if err != nil {
+		return nil, err
+	}
+	h := log15.FuncHandler(func(r *log15.Record) error {
+		var syslogFn = sysWr.Info
+		switch r.Lvl {
+		case log15.LvlCrit:
+			syslogFn = sysWr.Crit
+		case log15.LvlError:
+			syslogFn = sysWr.Err
+		case log15.LvlWarn:
+			syslogFn = sysWr.Warning
+		case log15.LvlInfo:
+			syslogFn = sysWr.Info
+		case log15.LvlDebug:
+			syslogFn = sysWr.Debug
+		}
+
+		s := strings.TrimSpace(string(fmtr.Format(r)))
+		return syslogFn(s)
+	})
+	return log15.LazyHandler(&closingHandler{sysWr, h}), nil
+}
+
 func init() {
 	// Parse command line
 	app.Version(version)
@@ -70,7 +111,7 @@ func init() {
 		handler = log.StreamHandler(os.Stdout, rslog.SimpleFormat(true))
 	case "syslog":
 		// We use the TCP syslog handler, there is no option!
-		h, err := rslog.NewTCPSyslogHandler(SyslogAddr, ApplicationName)
+		h, err := newSyslogNetHandler("tcp", "syslog", ApplicationName, log15.LogfmtFormat())
 		if err != nil {
 			kingpin.Fatalf(err.Error())
 		}
