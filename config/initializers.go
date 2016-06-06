@@ -111,7 +111,7 @@ func init() {
 		handler = log.StreamHandler(os.Stdout, rslog.SimpleFormat(true))
 	case "syslog":
 		// We use the TCP syslog handler, there is no option!
-		h, err := newSyslogNetHandler("tcp", "syslog", ApplicationName, log15.LogfmtFormat())
+		h, err := newSyslogNetHandler("tcp", SyslogAddr, ApplicationName, log15.LogfmtFormat())
 		if err != nil {
 			kingpin.Fatalf(err.Error())
 		}

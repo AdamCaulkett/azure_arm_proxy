@@ -7,7 +7,7 @@ $(NAME): *.go
 	go build -o $(NAME) .
 
 # the standard build produces a "local" executable, a linux tgz, and a darwin (macos) tgz
-build: test binary/$(NAME)-linux-amd64.tgz binary/$(NAME)-darwin-amd64.tgz
+build: test clean binary/$(NAME)-linux-amd64.tgz binary/$(NAME)-darwin-amd64.tgz
 
 test:
 	go test ./resources
