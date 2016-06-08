@@ -7,8 +7,10 @@ import (
 	"net/http"
 	"net/url"
 
-	"code.google.com/p/goauth2/oauth"
+	"golang.org/x/oauth2"
+
 	"github.com/labstack/echo"
+
 	"github.com/rightscale/azure_arm_proxy/config"
 	eh "github.com/rightscale/azure_arm_proxy/error_handler"
 )
@@ -41,29 +43,29 @@ type AuthResponse struct {
 }
 
 // AzureClientInitializer is a middleware that creates Azure client and handles credentials
-func AzureClientInitializer() echo.Middleware {
+func AzureClientInitializer() echo.MiddlewareFunc {
 	return func(h echo.HandlerFunc) echo.HandlerFunc {
-		return func(c *echo.Context) error {
-			if c.Request().RequestURI == "/health-check" {
+		return func(c echo.Context) error {
+			if c.Request().URI() == "/health-check" {
 				return h(c)
 			}
-			accessToken, err := getAccessToken(c)
+			accessToken, err := getAccessToken(&c)
 			if err != nil {
 				return err
 			}
 
-			if c.Request().Header.Get("Content-Type") == "application/json" {
-				bodyDecoder := json.NewDecoder(c.Request().Body)
+			if c.Request().Header().Get("Content-Type") == "application/json" {
+				bodyDecoder := json.NewDecoder(c.Request().Body())
 				c.Set("bodyDecoder", bodyDecoder)
 			} else {
 				return eh.GenericException("Azure plugin supports only \"application/json\" Content-Type.")
 			}
 			// prepare request params to use from form
-			if err := c.Request().ParseForm(); err != nil {
+			if err := c.Request().FormParams(); err != nil {
 				return eh.GenericException(fmt.Sprintf("Error has occurred while parsing params: %v", err))
 			}
 
-			subscriptionID, err := getCookie(c, "SubscriptionID")
+			subscriptionID, err := getCookie(&c, "SubscriptionID")
 			if err != nil {
 				if *config.Env == "development" {
 					subscriptionID = *config.SubscriptionIDCred
@@ -75,7 +77,10 @@ func AzureClientInitializer() echo.Middleware {
 				*config.SubscriptionIDCred = subscriptionID
 			}
 
-			t := &oauth.Transport{Token: &oauth.Token{AccessToken: accessToken}}
+			t := &oauth2.Transport{}
+// Not sure how to fix this
+//			t := &oauth2.Transport{Token: &oauth2.Token{AccessToken: accessToken}}
+
 			client := t.Client()
 			c.Set("azure", client)
 			return h(c)

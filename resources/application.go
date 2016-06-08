@@ -9,8 +9,8 @@ import (
 	"log"
 	"net/http"
 
-	"code.google.com/p/go-uuid/uuid"
-	"code.google.com/p/goauth2/oauth"
+	"golang.org/x/oauth2"
+	"github.com/google/uuid"
 	"github.com/labstack/echo"
 	"github.com/rightscale/azure_arm_proxy/config"
 	eh "github.com/rightscale/azure_arm_proxy/error_handler"

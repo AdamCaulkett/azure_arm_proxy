@@ -18,9 +18,10 @@ func (e *genericError) Error() string {
 	return e.Message
 }
 
+
 // AzureErrorHandler is a custom Echo.HTTPErrorHandler
 func AzureErrorHandler(e *echo.Echo) echo.HTTPErrorHandler {
-	return func(err error, c *echo.Context) {
+	return func(err error, c echo.Context) {
 		ge := new(genericError)
 		ge.Code = http.StatusInternalServerError // default status code is 500
 		ge.Message = http.StatusText(ge.Code)    // default message is 'Internal Server Error'
@@ -36,7 +37,7 @@ func AzureErrorHandler(e *echo.Echo) echo.HTTPErrorHandler {
 				ge.StackTrace = errorType.ErrorStack()
 			}
 		case *echo.HTTPError:
-			ge.Code = errorType.Code()
+			ge.Code = errorType.Code
 			ge.Message = errorType.Error()
 		}
 
