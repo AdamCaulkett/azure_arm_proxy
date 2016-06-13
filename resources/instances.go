@@ -183,9 +183,7 @@ func (i *Instance) GetRequestParams(c *echo.Context) (interface{}, error) {
 		},
 	}
 
-	if i.createParams.PrivateImageOsType == "" {
-		i.requestParams.Properties["osProfile"] = i.prepareOSProfile()
-	}
+	i.requestParams.Properties["osProfile"] = i.prepareOSProfile()
 
 	if i.createParams.AvailabilitySet != "" {
 		i.requestParams.Properties["availabilitySet"] = map[string]string{

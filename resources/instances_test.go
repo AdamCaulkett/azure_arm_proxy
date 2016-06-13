@@ -247,6 +247,12 @@ var _ = Describe("instances", func() {
 						Location: "westus",
 						Properties: map[string]interface{}{
 							"hardwareProfile": map[string]interface{}{"vmSize": "Standard_G1"},
+							"osProfile": map[string]interface{}{
+								"adminPassword": "Pass1234@",
+								"adminUsername": "rsadministrator",
+								"computerName":  "khrvi",
+								"customData":    "dGVzdF91c2VyX2RhdGE=",
+							},
 							"storageProfile": map[string]interface{}{
 								"osDisk": map[string]interface{}{
 									"name":         "os-khrvi1-rs",
