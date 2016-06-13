@@ -249,11 +249,14 @@ var _ = Describe("instances", func() {
 							"hardwareProfile": map[string]interface{}{"vmSize": "Standard_G1"},
 							"storageProfile": map[string]interface{}{
 								"osDisk": map[string]interface{}{
-									"name":         "os-khrvi-rs",
+									"name":         "os-khrvi1-rs",
 									"caching":      "ReadWrite",
-									"createOption": "attach",
-									"vhd": map[string]interface{}{
+									"createOption": "FromImage",
+									"image": map[string]interface{}{
 										"uri": "https://khrvitesttest1.blob.core.windows.net/vhds/os-khrvi-rs.vhd",
+									},
+									"vhd": map[string]interface{}{
+										"uri": "https://khrvitestgo1.blob.core.windows.net/vhds/os-khrvi1-rs.vhd",
 									},
 									"osType": "Linux",
 								},
@@ -267,7 +270,7 @@ var _ = Describe("instances", func() {
 					ghttp.RespondWith(201, listOneInstanceResponse),
 				),
 			)
-			response, err = client.Post("/resource_groups/Group-1/instances", "{\"name\": \"khrvi\", \"user_data\":\"test_user_data\", \"instance_type_uid\": \"Standard_G1\", \"location\": \"westus\", \"network_interfaces_ids\": [{\"id\": \"/subscriptions/test/resourceGroups/Group-1/providers/Microsoft.Network/networkInterfaces/khrvi_ni\"}], \"image_id\": \"https://khrvitesttest1.blob.core.windows.net/vhds/os-khrvi-rs.vhd\", \"private_image_os_platform\": \"Linux\", \"storage_account_id\": \"/subscriptions/test/resourceGroups/group-1/providers/Microsoft.Storage/storageAccounts/khrvitestgo1\", \"os_disk_name\": \"os-khrvi-rs\"}")
+			response, err = client.Post("/resource_groups/Group-1/instances", "{\"name\": \"khrvi\", \"user_data\":\"test_user_data\", \"instance_type_uid\": \"Standard_G1\", \"location\": \"westus\", \"network_interfaces_ids\": [{\"id\": \"/subscriptions/test/resourceGroups/Group-1/providers/Microsoft.Network/networkInterfaces/khrvi_ni\"}], \"image_id\": \"https://khrvitesttest1.blob.core.windows.net/vhds/os-khrvi-rs.vhd\", \"private_image_os_platform\": \"Linux\", \"storage_account_id\": \"/subscriptions/test/resourceGroups/group-1/providers/Microsoft.Storage/storageAccounts/khrvitestgo1\", \"os_disk_name\": \"os-khrvi1-rs\"}")
 		})
 
 		It("no error occured", func() {
