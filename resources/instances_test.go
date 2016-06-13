@@ -267,7 +267,7 @@ var _ = Describe("instances", func() {
 					ghttp.RespondWith(201, listOneInstanceResponse),
 				),
 			)
-			response, err = client.Post("/resource_groups/Group-1/instances", "{\"name\": \"khrvi\", \"user_data\":\"test_user_data\", \"instance_type_uid\": \"Standard_G1\", \"location\": \"westus\", \"network_interfaces_ids\": [{\"id\": \"/subscriptions/test/resourceGroups/Group-1/providers/Microsoft.Network/networkInterfaces/khrvi_ni\"}], \"private_image_id\": \"https://khrvitesttest1.blob.core.windows.net/vhds/os-khrvi-rs.vhd\", \"storage_account_id\": \"/subscriptions/test/resourceGroups/group-1/providers/Microsoft.Storage/storageAccounts/khrvitestgo1\", \"os_disk_name\": \"os-khrvi-rs\"}")
+			response, err = client.Post("/resource_groups/Group-1/instances", "{\"name\": \"khrvi\", \"user_data\":\"test_user_data\", \"instance_type_uid\": \"Standard_G1\", \"location\": \"westus\", \"network_interfaces_ids\": [{\"id\": \"/subscriptions/test/resourceGroups/Group-1/providers/Microsoft.Network/networkInterfaces/khrvi_ni\"}], \"image_id\": \"https://khrvitesttest1.blob.core.windows.net/vhds/os-khrvi-rs.vhd\", \"private_image_os_platform\": \"Linux\", \"storage_account_id\": \"/subscriptions/test/resourceGroups/group-1/providers/Microsoft.Storage/storageAccounts/khrvitestgo1\", \"os_disk_name\": \"os-khrvi-rs\"}")
 		})
 
 		It("no error occured", func() {
@@ -307,7 +307,7 @@ var _ = Describe("instances", func() {
 			response, err = client.Post("/resource_groups/Group-1/instances", "{\"name\": \"khrvi\", \"location\": \"westus\", \"instance_type_uid\": \"Standard_G1\", \"network_interface_id\": \"/subscriptions/test/resourceGroups/Group-1/providers/Microsoft.Network/networkInterfaces/khrvi_ni\", \"storage_account_id\": \"/subscriptions/test/resourceGroups/group-1/providers/Microsoft.Storage/storageAccounts/khrvitestgo1\"}")
 			Expect(err).NotTo(HaveOccurred())
 			Ω(response.Status).Should(Equal(400))
-			Ω(response.Body).Should(Equal("{\"Code\":400,\"Message\":\"One of these two params should be passed: 'image_id' or 'private_image_id'.\"}"))
+			Ω(response.Body).Should(Equal("{\"Code\":400,\"Message\":\"ImageID should be passed.\"}"))
 		})
 
 		It("returns validation error about wrong 'image_id'", func() {

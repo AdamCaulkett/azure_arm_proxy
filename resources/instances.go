@@ -58,8 +58,8 @@ type (
 		Group              string                 `json:"group_name,omitempty"`
 		NetworkInterfaceID []interface{}          `json:"network_interfaces_ids,omitempty"`
 		ImageID            string                 `json:"image_id,omitempty"`
+		PrivateImageOsType string                 `json:"private_image_os_platform,omitempty"`
 		Plan               map[string]interface{} `json:"image_plan,omitempty"`
-		PrivateImageID     string                 `json:"private_image_id,omitempty"`
 		StorageAccountID   string                 `json:"storage_account_id,omitempty"`
 		HostName           string                 `json:"host_name,omitempty"`
 		AdminUserName      string                 `json:"admin_user_name,omitempty"`
@@ -183,7 +183,7 @@ func (i *Instance) GetRequestParams(c *echo.Context) (interface{}, error) {
 		},
 	}
 
-	if i.createParams.PrivateImageID == "" {
+	if i.createParams.PrivateImageOsType == "" {
 		i.requestParams.Properties["osProfile"] = i.prepareOSProfile()
 	}
 
@@ -237,12 +237,13 @@ func (i *Instance) prepareOSProfile() map[string]interface{} {
 	if i.createParams.UserData != "" {
 		osProfile["customData"] = base64.StdEncoding.EncodeToString([]byte(i.createParams.UserData))
 	}
+
 	return osProfile
 }
 
 func (i *Instance) prepareStorageProfile() (map[string]interface{}, error) {
-	if i.createParams.ImageID == "" && i.createParams.PrivateImageID == "" {
-		return nil, eh.GenericException("One of these two params should be passed: 'image_id' or 'private_image_id'.")
+	if i.createParams.ImageID == "" {
+		return nil, eh.GenericException("ImageID should be passed.")
 	}
 	array := strings.Split(i.createParams.StorageAccountID, "/")
 	storageName := array[len(array)-1]
@@ -258,7 +259,7 @@ func (i *Instance) prepareStorageProfile() (map[string]interface{}, error) {
 			},
 		},
 	}
-	if i.createParams.ImageID != "" {
+	if i.createParams.PrivateImageOsType == "" {
 		array := strings.Split(i.createParams.ImageID, "/")
 		if len(array) != 17 {
 			return nil, eh.InvalidParamException("image_id")
@@ -275,10 +276,10 @@ func (i *Instance) prepareStorageProfile() (map[string]interface{}, error) {
 			"version":   version,   //"15.04.201505060",
 		}
 	} else {
-		storageProfile["osDisk"].(map[string]interface{})["osType"] = "Linux" // or Windows
+		storageProfile["osDisk"].(map[string]interface{})["osType"] = i.createParams.PrivateImageOsType
 		storageProfile["osDisk"].(map[string]interface{})["createOption"] = "attach"
 		storageProfile["osDisk"].(map[string]interface{})["vhd"] = map[string]interface{}{
-			"uri": i.createParams.PrivateImageID,
+			"uri": i.createParams.ImageID,
 		}
 	}
 
