@@ -277,8 +277,7 @@ func (i *Instance) prepareStorageProfile() (map[string]interface{}, error) {
 		}
 	} else {
 		storageProfile["osDisk"].(map[string]interface{})["osType"] = i.createParams.PrivateImageOsType
-		storageProfile["osDisk"].(map[string]interface{})["createOption"] = "attach"
-		storageProfile["osDisk"].(map[string]interface{})["vhd"] = map[string]interface{}{
+		storageProfile["osDisk"].(map[string]interface{})["image"] = map[string]interface{}{
 			"uri": i.createParams.ImageID,
 		}
 	}
