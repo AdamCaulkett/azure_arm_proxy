@@ -29,8 +29,12 @@ func listEvents(c *echo.Context) error {
 	if err != nil {
 		return eh.GenericException(fmt.Sprintf("Error has occurred while decoding params: %v", err))
 	}
+	creds, err := GetClientCredentials(c)
+	if err != nil {
+		return err
+	}
 	filter := requestParams.Filter
-	path := fmt.Sprintf("%s/subscriptions/%s/providers/microsoft.insights/eventtypes/management/values?api-version=%s&$filter=%s", config.BaseURL, *config.SubscriptionIDCred, "2014-04-01", filter)
+	path := fmt.Sprintf("%s/subscriptions/%s/providers/microsoft.insights/eventtypes/management/values?api-version=%s&$filter=%s", config.BaseURL, creds.Subscription, "2014-04-01", filter)
 	if requestParams.Select != "" {
 		path = fmt.Sprintf("%s&$select=%s", path, requestParams.Select)
 	}

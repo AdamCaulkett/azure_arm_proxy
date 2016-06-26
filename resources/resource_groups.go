@@ -106,13 +106,13 @@ func (rg *ResourceGroup) GetResponseParams() interface{} {
 }
 
 // GetPath returns full path to the sigle resource group
-func (rg *ResourceGroup) GetPath() string {
-	return fmt.Sprintf("%s/subscriptions/%s/resourceGroups/%s?api-version=%s", config.BaseURL, *config.SubscriptionIDCred, rg.createParams.Name, resourceGroupApiVersion)
+func (rg *ResourceGroup) GetPath(subscription string) string {
+	return fmt.Sprintf("%s/subscriptions/%s/resourceGroups/%s?api-version=%s", config.BaseURL, subscription, rg.createParams.Name, resourceGroupApiVersion)
 }
 
 // GetCollectionPath returns full path to the collection of resource groups
-func (rg *ResourceGroup) GetCollectionPath(_ string) string {
-	return fmt.Sprintf("%s/subscriptions/%s/resourceGroups?api-version=%s", config.BaseURL, *config.SubscriptionIDCred, resourceGroupApiVersion)
+func (rg *ResourceGroup) GetCollectionPath(_ string, subscription string) string {
+	return fmt.Sprintf("%s/subscriptions/%s/resourceGroups?api-version=%s", config.BaseURL, subscription, resourceGroupApiVersion)
 }
 
 // HandleResponse manage raw cloud response

@@ -63,16 +63,17 @@ func AzureClientInitializer() echo.Middleware {
 				return eh.GenericException(fmt.Sprintf("Error has occurred while parsing params: %v", err))
 			}
 
-			subscriptionID, err := getCookie(c, "SubscriptionID")
+			subscriptionID, err := getSubscriptionID(c)
 			if err != nil {
-				if *config.Env == "development" {
-					subscriptionID = *config.SubscriptionIDCred
-				}
-				if subscriptionID == "" {
-					return eh.GenericException("The 'SubscriptionID' cookie is required.")
-				}
+				return err
 			} else {
-				*config.SubscriptionIDCred = subscriptionID
+				creds, _ := c.Get("clientCreds").(*Credentials)
+				if creds == nil {
+					creds = new(Credentials)
+				}
+				creds.Subscription = subscriptionID
+				// store creds for further usage
+				c.Set("clientCreds", creds)
 			}
 
 			t := &oauth.Transport{Token: &oauth.Token{AccessToken: accessToken}}
@@ -89,6 +90,19 @@ func getCookie(c *echo.Context, name string) (string, error) {
 		return "", eh.GenericException(fmt.Sprintf("cookie '%s' is missing", cookie))
 	}
 	return cookie.Value, nil
+}
+
+func getSubscriptionID(c *echo.Context) (string, error) {
+	subscriptionID, err := getCookie(c, "SubscriptionID")
+	if err != nil {
+		if *config.Env == "development" {
+			subscriptionID = *config.SubscriptionIDCred
+		}
+		if subscriptionID == "" {
+			return "", eh.GenericException("The 'SubscriptionID' cookie is required.")
+		}
+	}
+	return subscriptionID, nil
 }
 
 func getAccessToken(c *echo.Context) (string, error) {
@@ -109,32 +123,33 @@ func refreshAccessToken(c *echo.Context) (string, error) {
 			creds.TenantID = *config.TenantIDCred
 		}
 	}
-	*config.TenantIDCred = creds.TenantID
+
 	creds.ClientID, err = getCookie(c, "ClientID")
 	if err != nil {
 		if *config.Env == "development" {
 			creds.ClientID = *config.ClientIDCred
 		}
 	}
-	*config.ClientIDCred = creds.ClientID
+
 	creds.ClientSecret, err = getCookie(c, "ClientSecret")
 	if err != nil {
 		if *config.Env == "development" {
 			creds.ClientSecret = *config.ClientSecretCred
 		}
 	}
-	*config.ClientSecretCred = creds.ClientSecret
+
 	creds.RefreshToken, err = getCookie(c, "RefreshToken")
 	if err != nil {
 		if *config.Env == "development" {
 			creds.RefreshToken = *config.RefreshTokenCred
 		}
 	}
-	*config.RefreshTokenCred = creds.RefreshToken
 
 	if creds.TenantID == "" || creds.ClientID == "" || creds.ClientSecret == "" || creds.RefreshToken == "" {
 		return "", eh.GenericException("The credentials are missing in the cookie. Please set 'AccessToken' or combination of 'TenantID', 'ClientID', 'ClientSecret', 'RefreshToken'.")
 	}
+	// store creds for further usage
+	c.Set("clientCreds", creds)
 	// use client specific access token only while app registration
 	//TODO: use regexp here
 	if c.Request().RequestURI == *config.AppPrefix+"/application/register" || c.Request().RequestURI == *config.AppPrefix+"/application/unregister" {

@@ -65,7 +65,11 @@ func SetupNetworkSecurityGroupRuleRoutes(e *echo.Group) {
 
 func listAllNetworkSecurityGroupRules(c *echo.Context) error {
 	rules := make([]map[string]interface{}, 0)
-	path := fmt.Sprintf("%s/subscriptions/%s/%s?api-version=%s", config.BaseURL, *config.SubscriptionIDCred, networkSecurityGroupPath, microsoftNetworkApiVersion)
+	creds, err := GetClientCredentials(c)
+	if err != nil {
+		return err
+	}
+	path := fmt.Sprintf("%s/subscriptions/%s/%s?api-version=%s", config.BaseURL, creds.Subscription, networkSecurityGroupPath, microsoftNetworkApiVersion)
 	groups, err := GetResources(c, path)
 	if err != nil {
 		return err
@@ -74,7 +78,7 @@ func listAllNetworkSecurityGroupRules(c *echo.Context) error {
 		array := strings.Split(group["id"].(string), "/")
 		groupName := array[len(array)-5]
 		groupID := group["name"].(string)
-		path := fmt.Sprintf("%s/subscriptions/%s/resourceGroups/%s/%s/%s/securityRules?api-version=%s", config.BaseURL, *config.SubscriptionIDCred, groupName, networkSecurityGroupPath, groupID, microsoftNetworkApiVersion)
+		path := fmt.Sprintf("%s/subscriptions/%s/resourceGroups/%s/%s/%s/securityRules?api-version=%s", config.BaseURL, creds.Subscription, groupName, networkSecurityGroupPath, groupID, microsoftNetworkApiVersion)
 		resp, err := GetResources(c, path)
 		if err != nil {
 			return err
@@ -90,7 +94,11 @@ func listAllNetworkSecurityGroupRules(c *echo.Context) error {
 func listNetworkSecurityGroupRules(c *echo.Context) error {
 	groupName := c.Param("group_name")
 	groupID := c.Param("security_group_name")
-	path := fmt.Sprintf("%s/subscriptions/%s/resourceGroups/%s/%s/%s/securityRules?api-version=%s", config.BaseURL, *config.SubscriptionIDCred, groupName, networkSecurityGroupPath, groupID, microsoftNetworkApiVersion)
+	creds, err := GetClientCredentials(c)
+	if err != nil {
+		return err
+	}
+	path := fmt.Sprintf("%s/subscriptions/%s/resourceGroups/%s/%s/%s/securityRules?api-version=%s", config.BaseURL, creds.Subscription, groupName, networkSecurityGroupPath, groupID, microsoftNetworkApiVersion)
 	rules, err := GetResources(c, path)
 	if err != nil {
 		return err
@@ -128,7 +136,11 @@ func listOneDefaultNetworkSecurityGroupRule(c *echo.Context) error {
 func listDefaultNetworkSecurityGroupRules(c *echo.Context) error {
 	groupName := c.Param("group_name")
 	groupID := c.Param("security_group_name")
-	path := fmt.Sprintf("%s/subscriptions/%s/resourceGroups/%s/%s/%s/defaultSecurityRules?api-version=%s", config.BaseURL, *config.SubscriptionIDCred, groupName, networkSecurityGroupPath, groupID, microsoftNetworkApiVersion)
+	creds, err := GetClientCredentials(c)
+	if err != nil {
+		return err
+	}
+	path := fmt.Sprintf("%s/subscriptions/%s/resourceGroups/%s/%s/%s/defaultSecurityRules?api-version=%s", config.BaseURL, creds.Subscription, groupName, networkSecurityGroupPath, groupID, microsoftNetworkApiVersion)
 	rules, err := GetResources(c, path)
 	if err != nil {
 		return err
@@ -186,16 +198,18 @@ func (r *NetworkSecurityGroupRule) GetResponseParams() interface{} {
 }
 
 // GetPath returns full path to the sigle network security group rule
-func (r *NetworkSecurityGroupRule) GetPath() string {
+func (r *NetworkSecurityGroupRule) GetPath(subscription string) string {
 	resourceName := "securityRules"
 	if r.createParams.Type == "default" {
 		resourceName = "defaultSecurityRules"
 	}
-	return fmt.Sprintf("%s/subscriptions/%s/resourceGroups/%s/%s/%s/%s/%s?api-version=%s", config.BaseURL, *config.SubscriptionIDCred, r.createParams.Group, networkSecurityGroupPath, r.createParams.SecurityGroupID, resourceName, r.createParams.Name, microsoftNetworkApiVersion)
+	return fmt.Sprintf("%s/subscriptions/%s/resourceGroups/%s/%s/%s/%s/%s?api-version=%s", config.BaseURL, subscription, r.createParams.Group, networkSecurityGroupPath, r.createParams.SecurityGroupID, resourceName, r.createParams.Name, microsoftNetworkApiVersion)
 }
 
 // GetCollectionPath is a fake function to support AzureResource by NetworkSecurityGroupRule
-func (r *NetworkSecurityGroupRule) GetCollectionPath(groupName string) string { return "" }
+func (r *NetworkSecurityGroupRule) GetCollectionPath(groupName string, subscription string) string {
+	return ""
+}
 
 // HandleResponse manage raw cloud response
 func (r *NetworkSecurityGroupRule) HandleResponse(c *echo.Context, body []byte, actionName string) error {

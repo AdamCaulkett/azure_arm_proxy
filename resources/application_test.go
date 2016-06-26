@@ -14,8 +14,8 @@ import (
 const (
 	authRsponse              = `{"access_token": "test_access_token", "expires_on": "123456789"}`
 	servicePrincipalResponse = `{"value":[{ "objectType":"ServicePrincipal","objectId":"7f06b355-4136-4d8b-a3c8-7028f59869ae"}]}`
-	listRoleAssignments      = `{"value":[{"properties":{"roleDefinitionId":"/subscriptions/test/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c","principalId":"7f06b355-4136-4d8b-a3c8-7028f59869ae","scope":"/subscriptions/test"},"id":"/subscriptions/test/providers/Microsoft.Authorization/roleAssignments/4f87261d-2816-465d-8311-70a27558df4c","type":"Microsoft.Authorization/roleAssignments","name":"4f87261d-2816-465d-8311-70a27558df4c"}]}`
-	deleteRoleAssignment     = "{\"properties\":{\"roleDefinitionId\":\"/subscriptions/test/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c\",\"principalId\":\"7f06b355-4136-4d8b-a3c8-7028f59869ae\",\"scope\":\"/subscriptions/test\"},\"id\":\"/subscriptions/test/providers/Microsoft.Authorization/roleAssignments/4f87261d-2816-465d-8311-70a27558df4c\",\"type\":\"Microsoft.Authorization/roleAssignments\",\"name\":\"4f87261d-2816-465d-8311-70a27558df4c\"}"
+	listRoleAssignments      = `{"value":[{"properties":{"roleDefinitionId":"/subscriptions/test_subscription/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c","principalId":"7f06b355-4136-4d8b-a3c8-7028f59869ae","scope":"/subscriptions/test"},"id":"/subscriptions/test/providers/Microsoft.Authorization/roleAssignments/4f87261d-2816-465d-8311-70a27558df4c","type":"Microsoft.Authorization/roleAssignments","name":"4f87261d-2816-465d-8311-70a27558df4c"}]}`
+	deleteRoleAssignment     = "{\"properties\":{\"roleDefinitionId\":\"/subscriptions/test_subscription/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c\",\"principalId\":\"7f06b355-4136-4d8b-a3c8-7028f59869ae\",\"scope\":\"/subscriptions/test\"},\"id\":\"/subscriptions/test/providers/Microsoft.Authorization/roleAssignments/4f87261d-2816-465d-8311-70a27558df4c\",\"type\":\"Microsoft.Authorization/roleAssignments\",\"name\":\"4f87261d-2816-465d-8311-70a27558df4c\"}"
 )
 
 var _ = Describe("application", func() {
@@ -41,7 +41,6 @@ var _ = Describe("application", func() {
 		BeforeEach(func() {
 			// make empty access token and subscription in order to refresh access token
 			AccessTokenTest = ""
-			*config.SubscriptionIDCred = ""
 			CredsTest = am.Credentials{
 				TenantID:     "test_tenant",
 				ClientID:     "test_client",
@@ -74,8 +73,10 @@ var _ = Describe("application", func() {
 		})
 
 		AfterEach(func() {
-			AccessTokenTest = "fake"                    // set back access token
-			*config.SubscriptionIDCred = subscriptionID //set back default subscription
+			AccessTokenTest = "fake" // set back access token
+			CredsTest = am.Credentials{
+				Subscription: subscriptionID,
+			}
 		})
 
 		It("no error occured", func() {
@@ -102,7 +103,21 @@ var _ = Describe("application", func() {
 
 	Describe("unregister", func() {
 		BeforeEach(func() {
+			// make empty access token and subscription in order to refresh access token
+			AccessTokenTest = ""
+			CredsTest = am.Credentials{
+				TenantID:     "test_tenant",
+				ClientID:     "test_client",
+				ClientSecret: "test_secret",
+				RefreshToken: "test_token",
+				Subscription: "test_subscription",
+			}
 			do.AppendHandlers(
+				ghttp.CombineHandlers(
+					ghttp.VerifyRequest("POST", "/test_tenant/oauth2/token"),
+					ghttp.RespondWith(http.StatusOK, authRsponse),
+				),
+				// requesting access token with resource "https://graph.windows.net/"
 				ghttp.CombineHandlers(
 					ghttp.VerifyRequest("POST", "/test_tenant/oauth2/token"),
 					ghttp.RespondWith(http.StatusOK, authRsponse),
@@ -113,11 +128,11 @@ var _ = Describe("application", func() {
 				),
 
 				ghttp.CombineHandlers(
-					ghttp.VerifyRequest("GET", "/subscriptions/test/providers/microsoft.authorization/roleassignments"),
+					ghttp.VerifyRequest("GET", "/subscriptions/test_subscription/providers/microsoft.authorization/roleassignments"),
 					ghttp.RespondWith(200, listRoleAssignments),
 				),
 				ghttp.CombineHandlers(
-					ghttp.VerifyRequest("DELETE", "/subscriptions/test/providers/microsoft.authorization/roleassignments/4f87261d-2816-465d-8311-70a27558df4c"),
+					ghttp.VerifyRequest("DELETE", "/subscriptions/test_subscription/providers/microsoft.authorization/roleassignments/4f87261d-2816-465d-8311-70a27558df4c"),
 					ghttp.RespondWith(200, deleteRoleAssignment),
 				),
 			)
@@ -125,12 +140,19 @@ var _ = Describe("application", func() {
 			response, err = client.Delete("/application/unregister")
 		})
 
+		AfterEach(func() {
+			AccessTokenTest = "fake" // set back access token
+			CredsTest = am.Credentials{
+				Subscription: subscriptionID,
+			}
+		})
+
 		It("no error occured", func() {
 			Expect(err).NotTo(HaveOccurred())
 		})
 
 		It("returns 204 status code", func() {
-			Ω(do.ReceivedRequests()).Should(HaveLen(4))
+			Ω(do.ReceivedRequests()).Should(HaveLen(5))
 			Ω(response.Status).Should(Equal(204))
 		})
 

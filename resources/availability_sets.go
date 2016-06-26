@@ -61,16 +61,20 @@ func listAvailabilitySets(c *echo.Context) error {
 }
 
 func listAllAvailabilitySets(c *echo.Context) error {
+	creds, err := GetClientCredentials(c)
+	if err != nil {
+		return err
+	}
 	var sets []map[string]interface{}
 	as := new(AvailabilitySet)
-	path := fmt.Sprintf("%s/subscriptions/%s/resourceGroups?api-version=%s", config.BaseURL, *config.SubscriptionIDCred, resourceGroupApiVersion)
+	path := fmt.Sprintf("%s/subscriptions/%s/resourceGroups?api-version=%s", config.BaseURL, creds.Subscription, resourceGroupApiVersion)
 	resourceGroups, err := GetResources(c, path)
 	if err != nil {
 		return err
 	}
 	for _, group := range resourceGroups {
 		groupName := group["name"].(string)
-		path := fmt.Sprintf("%s/subscriptions/%s/resourceGroups/%s/%s?api-version=%s", config.BaseURL, *config.SubscriptionIDCred, groupName, availabilitySetPath, microsoftComputeApiVersion)
+		path := fmt.Sprintf("%s/subscriptions/%s/resourceGroups/%s/%s?api-version=%s", config.BaseURL, creds.Subscription, groupName, availabilitySetPath, microsoftComputeApiVersion)
 		resp, err := GetResources(c, path)
 		if err != nil {
 			return err
@@ -131,16 +135,16 @@ func (as *AvailabilitySet) GetResponseParams() interface{} {
 }
 
 // GetPath returns full path to the sigle availability set
-func (as *AvailabilitySet) GetPath() string {
-	return fmt.Sprintf("%s/subscriptions/%s/resourceGroups/%s/%s/%s?api-version=%s", config.BaseURL, *config.SubscriptionIDCred, as.createParams.Group, availabilitySetPath, as.createParams.Name, microsoftComputeApiVersion)
+func (as *AvailabilitySet) GetPath(subscription string) string {
+	return fmt.Sprintf("%s/subscriptions/%s/resourceGroups/%s/%s/%s?api-version=%s", config.BaseURL, subscription, as.createParams.Group, availabilitySetPath, as.createParams.Name, microsoftComputeApiVersion)
 }
 
 // GetCollectionPath returns full path to the collection of availability sets
-func (as *AvailabilitySet) GetCollectionPath(groupName string) string {
+func (as *AvailabilitySet) GetCollectionPath(groupName string, subscription string) string {
 	if groupName == "" {
-		return fmt.Sprintf("%s/subscriptions/%s/%s?api-version=%s", config.BaseURL, *config.SubscriptionIDCred, availabilitySetPath, microsoftComputeApiVersion)
+		return fmt.Sprintf("%s/subscriptions/%s/%s?api-version=%s", config.BaseURL, subscription, availabilitySetPath, microsoftComputeApiVersion)
 	}
-	return fmt.Sprintf("%s/subscriptions/%s/resourceGroups/%s/%s?api-version=%s", config.BaseURL, *config.SubscriptionIDCred, groupName, availabilitySetPath, microsoftComputeApiVersion)
+	return fmt.Sprintf("%s/subscriptions/%s/resourceGroups/%s/%s?api-version=%s", config.BaseURL, subscription, groupName, availabilitySetPath, microsoftComputeApiVersion)
 }
 
 // HandleResponse manage raw cloud response

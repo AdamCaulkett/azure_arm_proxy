@@ -108,16 +108,16 @@ func (rt *RouteTable) GetResponseParams() interface{} {
 }
 
 // GetPath returns full path to the sigle route table
-func (rt *RouteTable) GetPath() string {
-	return fmt.Sprintf("%s/subscriptions/%s/resourceGroups/%s/%s/%s?api-version=%s", config.BaseURL, *config.SubscriptionIDCred, rt.createParams.Group, routeTablePath, rt.createParams.Name, microsoftNetworkApiVersion)
+func (rt *RouteTable) GetPath(subscription string) string {
+	return fmt.Sprintf("%s/subscriptions/%s/resourceGroups/%s/%s/%s?api-version=%s", config.BaseURL, subscription, rt.createParams.Group, routeTablePath, rt.createParams.Name, microsoftNetworkApiVersion)
 }
 
 // GetCollectionPath returns full path to the collection of route tables
-func (rt *RouteTable) GetCollectionPath(groupName string) string {
+func (rt *RouteTable) GetCollectionPath(groupName string, subscription string) string {
 	if groupName == "" {
-		return fmt.Sprintf("%s/subscriptions/%s/%s?api-version=%s", config.BaseURL, *config.SubscriptionIDCred, routeTablePath, microsoftNetworkApiVersion)
+		return fmt.Sprintf("%s/subscriptions/%s/%s?api-version=%s", config.BaseURL, subscription, routeTablePath, microsoftNetworkApiVersion)
 	}
-	return fmt.Sprintf("%s/subscriptions/%s/resourceGroups/%s/%s?api-version=%s", config.BaseURL, *config.SubscriptionIDCred, groupName, routeTablePath, microsoftNetworkApiVersion)
+	return fmt.Sprintf("%s/subscriptions/%s/resourceGroups/%s/%s?api-version=%s", config.BaseURL, subscription, groupName, routeTablePath, microsoftNetworkApiVersion)
 }
 
 // HandleResponse manage raw cloud response

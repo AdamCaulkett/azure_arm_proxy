@@ -139,22 +139,19 @@ func findRoleAssignmentID(c *echo.Context, principalID string, subscription stri
 
 // Get params required for app (un)registration
 func prepareParams(c *echo.Context) (string, string, error) {
-	creds := am.Credentials{
-		GrantType:    "client_credentials",
-		Resource:     "https://graph.windows.net/",
-		TenantID:     *config.TenantIDCred,
-		ClientID:     *config.ClientIDCred,
-		ClientSecret: *config.ClientSecretCred,
-		RefreshToken: *config.RefreshTokenCred,
-		Subscription: *config.SubscriptionIDCred,
+	creds, err := GetClientCredentials(c)
+	if err != nil {
+		return "", "", err
 	}
+	creds.GrantType = "client_credentials"
+	creds.Resource = "https://graph.windows.net/"
 	authResponse, err := creds.RequestToken()
 	if err != nil {
 		return "", "", err
 	}
 	t := &oauth.Transport{Token: &oauth.Token{AccessToken: authResponse.AccessToken}}
 	graphClient := t.Client()
-	principalID, err := getServicePrincipal(graphClient, &creds)
+	principalID, err := getServicePrincipal(graphClient, creds)
 	if err != nil {
 		return "", "", err
 	}

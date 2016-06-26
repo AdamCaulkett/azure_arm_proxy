@@ -59,13 +59,13 @@ func (p *Provider) GetResponseParams() interface{} {
 }
 
 // GetPath returns full path to the sigle provider
-func (p *Provider) GetPath() string {
-	return fmt.Sprintf("%s/subscriptions/%s/providers/%s?api-version=%s", config.BaseURL, *config.SubscriptionIDCred, p.Name, providerAPIVersion)
+func (p *Provider) GetPath(subscription string) string {
+	return fmt.Sprintf("%s/subscriptions/%s/providers/%s?api-version=%s", config.BaseURL, subscription, p.Name, providerAPIVersion)
 }
 
 // GetCollectionPath returns full path to the collection of providers
-func (p *Provider) GetCollectionPath(_ string) string {
-	return fmt.Sprintf("%s/subscriptions/%s/providers?api-version=%s", config.BaseURL, *config.SubscriptionIDCred, providerAPIVersion)
+func (p *Provider) GetCollectionPath(_ string, subscription string) string {
+	return fmt.Sprintf("%s/subscriptions/%s/providers?api-version=%s", config.BaseURL, subscription, providerAPIVersion)
 }
 
 // HandleResponse manage raw cloud response
@@ -90,7 +90,11 @@ func (p *Provider) GetHref(namespace string) string {
 func registerProvider(c *echo.Context) error {
 	provider := new(Provider)
 	provider.Name = c.Param("provider_name")
-	body, err := GetResource(c, provider.GetPath())
+	creds, err := GetClientCredentials(c)
+	if err != nil {
+		return err
+	}
+	body, err := GetResource(c, provider.GetPath(creds.Subscription))
 	if err != nil {
 		return err
 	}
@@ -102,7 +106,11 @@ func registerProvider(c *echo.Context) error {
 		if err != nil {
 			return err
 		}
-		path := fmt.Sprintf("%s/subscriptions/%s/providers/%s/register?api-version=%s", config.BaseURL, *config.SubscriptionIDCred, provider.Name, providerAPIVersion)
+		creds, err := GetClientCredentials(c)
+		if err != nil {
+			return err
+		}
+		path := fmt.Sprintf("%s/subscriptions/%s/providers/%s/register?api-version=%s", config.BaseURL, creds.Subscription, provider.Name, providerAPIVersion)
 		log.Printf("Registering Provider %s: %s\n", provider.Name, path)
 		resp, err := client.PostForm(path, nil)
 		if err != nil {

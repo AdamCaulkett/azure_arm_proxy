@@ -24,10 +24,10 @@ type AzureResource interface {
 	GetResponseParams() interface{}
 	// GetPath should return path to single resource.
 	// Builds path from createParams
-	GetPath() string
+	GetPath(string) string
 	// GetCollectionPath should return path to collection of resource.
 	// Input parameter is a parent id (ex: group_name)
-	GetCollectionPath(string) string
+	GetCollectionPath(string, string) string
 	// HandleResponse could contain varyity of handlers for different actions if needed but the main aim of it
 	// is to get raw response (second param), handle it (ex: unmarshal) and modify response params (responseParams) or response header.
 	HandleResponse(*echo.Context, []byte, string) error
@@ -54,7 +54,11 @@ func Create(c *echo.Context, r AzureResource) error {
 	}
 	var reader io.Reader
 	reader = bytes.NewBufferString(string(by))
-	path := r.GetPath()
+	creds, err := GetClientCredentials(c)
+	if err != nil {
+		return err
+	}
+	path := r.GetPath(creds.Subscription)
 	request, err := http.NewRequest("PUT", path, reader)
 	if err != nil {
 		return eh.GenericException(fmt.Sprintf("Error has occurred while creating resource: %v", err))
@@ -96,7 +100,11 @@ func Delete(c *echo.Context, r AzureResource) error {
 	if err != nil {
 		return err
 	}
-	path := r.GetPath()
+	creds, err := GetClientCredentials(c)
+	if err != nil {
+		return err
+	}
+	path := r.GetPath(creds.Subscription)
 	log.Printf("Delete request: %s\n", path)
 
 	req, err := http.NewRequest("DELETE", path, nil)
@@ -131,7 +139,11 @@ func Delete(c *echo.Context, r AzureResource) error {
 
 // Get resource
 func Get(c *echo.Context, r AzureResource) error {
-	path := r.GetPath()
+	creds, err := GetClientCredentials(c)
+	if err != nil {
+		return err
+	}
+	path := r.GetPath(creds.Subscription)
 	body, err := GetResource(c, path)
 	if err != nil {
 		return err
@@ -146,7 +158,11 @@ func Get(c *echo.Context, r AzureResource) error {
 // List gets all resources in scope of subscription or in scope of resource group if "group_name" provided
 func List(c *echo.Context, r AzureResource) error {
 	groupName := c.Param("group_name")
-	resourcePath := r.GetCollectionPath(groupName)
+	creds, err := GetClientCredentials(c)
+	if err != nil {
+		return err
+	}
+	resourcePath := r.GetCollectionPath(groupName, creds.Subscription)
 	resources, err := GetResources(c, resourcePath)
 	if err != nil {
 		return err

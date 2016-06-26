@@ -15,7 +15,11 @@ func SetupInstanceTypesRoutes(e *echo.Group) {
 //This API lists all available virtual machine sizes for a subscription in a given region.
 func listInstanceTypes(c *echo.Context) error {
 	location := c.Param("location")
-	path := fmt.Sprintf("%s/subscriptions/%s/providers/Microsoft.Compute/locations/%s/vmSizes?api-version=%s", config.BaseURL, *config.SubscriptionIDCred, location, microsoftComputeApiVersion)
+	creds, err := GetClientCredentials(c)
+	if err != nil {
+		return err
+	}
+	path := fmt.Sprintf("%s/subscriptions/%s/providers/Microsoft.Compute/locations/%s/vmSizes?api-version=%s", config.BaseURL, creds.Subscription, location, microsoftComputeApiVersion)
 	its, err := GetResources(c, path)
 	if err != nil {
 		return err

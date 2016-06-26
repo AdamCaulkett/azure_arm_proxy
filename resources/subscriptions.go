@@ -34,8 +34,8 @@ func getSubscription(c *echo.Context) error {
 }
 
 // GetPath returns full path to the sigle subscription
-func (s *Subscription) GetPath() string {
-	return fmt.Sprintf("%s/%s/%s?api-version=%s", config.BaseURL, subscriptionsPath, *config.SubscriptionIDCred, "2015-01-01")
+func (s *Subscription) GetPath(subscription string) string {
+	return fmt.Sprintf("%s/%s/%s?api-version=%s", config.BaseURL, subscriptionsPath, subscription, "2015-01-01")
 }
 
 // HandleResponse manage raw cloud response
@@ -61,7 +61,7 @@ func (s *Subscription) GetHref(_ string) string {
 func (s *Subscription) GetResponseParams() interface{} { return s }
 
 //GetCollectionPath is a fake function to support AzureResource by Subscription
-func (s *Subscription) GetCollectionPath(groupName string) string { return "" }
+func (s *Subscription) GetCollectionPath(groupName string, subscription string) string { return "" }
 
 //GetRequestParams is a fake function to support AzureResource by Subscription
 func (s *Subscription) GetRequestParams(c *echo.Context) (interface{}, error) { return "", nil }

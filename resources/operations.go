@@ -21,16 +21,20 @@ func SetupOperationRoutes(e *echo.Group) {
 
 func getOperation(c *echo.Context) error {
 	service := c.Param("service")
+	creds, err := GetClientCredentials(c)
+	if err != nil {
+		return err
+	}
 	var path string
 	//Crasy stuff
 	if service == "storage" {
-		path = fmt.Sprintf("%s/subscriptions/%s/providers/Microsoft.Storage/operations/%s?monitor=true&api-version=%s", config.BaseURL, *config.SubscriptionIDCred, c.Param("id"), "2015-06-15")
+		path = fmt.Sprintf("%s/subscriptions/%s/providers/Microsoft.Storage/operations/%s?monitor=true&api-version=%s", config.BaseURL, creds.Subscription, c.Param("id"), "2015-06-15")
 	} else if service == "microsoft.compute" {
-		path = fmt.Sprintf("%s/subscriptions/%s/providers/Microsoft.Compute/locations/%s/operations/%s?monitor=true&api-version=%s", config.BaseURL, *config.SubscriptionIDCred, c.Param("location"), c.Param("id"), "2015-05-01-preview")
+		path = fmt.Sprintf("%s/subscriptions/%s/providers/Microsoft.Compute/locations/%s/operations/%s?monitor=true&api-version=%s", config.BaseURL, creds.Subscription, c.Param("location"), c.Param("id"), "2015-05-01-preview")
 	} else if service == "microsoft.network" {
-		path = fmt.Sprintf("%s/subscriptions/%s/providers/Microsoft.Network/locations/%s/operationResults/%s?api-version=%s", config.BaseURL, *config.SubscriptionIDCred, c.Param("location"), c.Param("id"), "2015-06-15")
+		path = fmt.Sprintf("%s/subscriptions/%s/providers/Microsoft.Network/locations/%s/operationResults/%s?api-version=%s", config.BaseURL, creds.Subscription, c.Param("location"), c.Param("id"), "2015-06-15")
 	} else {
-		path = fmt.Sprintf("%s/subscriptions/%s/operationresults/%s?api-version=%s", config.BaseURL, *config.SubscriptionIDCred, c.Param("id"), "2015-11-01")
+		path = fmt.Sprintf("%s/subscriptions/%s/operationresults/%s?api-version=%s", config.BaseURL, creds.Subscription, c.Param("id"), "2015-11-01")
 	}
 
 	client, err := GetAzureClient(c)

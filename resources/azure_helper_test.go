@@ -29,12 +29,13 @@ const (
 )
 
 var AccessTokenTest = "fake"
-var CredsTest = am.Credentials{}
+var CredsTest = am.Credentials{
+	Subscription: subscriptionID,
+}
 
 // Run once for all tests
 // Can't shutdown http servers just yet https://github.com/golang/go/issues/4674
 var _ = BeforeSuite(func() {
-	*config.SubscriptionIDCred = subscriptionID
 	plugin := httpServer()
 	go plugin.Run(":" + PluginPort)
 })
@@ -88,6 +89,7 @@ func (c *AzureClient) do(verb, url, body string) (*Response, error) {
 	}
 	if AccessTokenTest != "" {
 		req.AddCookie(&http.Cookie{Name: "AccessToken", Value: AccessTokenTest})
+		req.AddCookie(&http.Cookie{Name: "SubscriptionID", Value: CredsTest.Subscription})
 	} else {
 		req.AddCookie(&http.Cookie{Name: "TenantID", Value: CredsTest.TenantID})
 		req.AddCookie(&http.Cookie{Name: "ClientID", Value: CredsTest.ClientID})
