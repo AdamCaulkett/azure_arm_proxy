@@ -17,7 +17,7 @@ function entrypoint() {
             ;;
     esac
 
-    exec /srv/azure_arm_proxy/azure_v2/azure_v2 --listen=":8083" --prefix="/azure_v2" --log_type=syslog
+    exec /srv/azure_arm_proxy/azure_v2/azure_v2 --listen=":8083" --prefix="/azure_v2" --log_type=syslog --env="production"
 }
 
 entrypoint $@
