@@ -1,0 +1,15 @@
+package: github.com/rightscale/azure_arm_proxy
+import:
+- package: code.google.com/p/go-uuid
+  subpackages:
+  - uuid
+- package: code.google.com/p/goauth2
+  subpackages:
+  - oauth
+- package: github.com/go-errors/errors
+- package: github.com/labstack/echo
+  subpackages:
+  - middleware
+- package: github.com/rightscale/rslog
+- package: gopkg.in/alecthomas/kingpin.v1
+- package: gopkg.in/inconshreveable/log15.v2

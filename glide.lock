@@ -1,0 +1,45 @@
+hash: 962dcc4d4e7a0e518c1d01ae97b599d77e47883543d620f1318143b6adb56649
+updated: 2016-06-29T01:26:59.597231061+03:00
+imports:
+- name: code.google.com/p/go-uuid
+  version: ""
+  subpackages:
+  - uuid
+- name: code.google.com/p/goauth2
+  version: ""
+  subpackages:
+  - oauth
+- name: github.com/dgrijalva/jwt-go
+  version: f0777076321ab64f6efc15a82d9d23b98539b943
+- name: github.com/go-errors/errors
+  version: a41850380601eeb43f4350f7d17c6bbd8944aaf8
+- name: github.com/labstack/echo
+  version: d5373e140237ffb4b8569640eb30bde7cb886c89
+  subpackages:
+  - middleware
+  - engine
+  - log
+- name: github.com/labstack/gommon
+  version: 722aa12d41c236ce78ff48eac1cafe0107ecdc9d
+  subpackages:
+  - log
+  - bytes
+  - color
+- name: github.com/mattn/go-isatty
+  version: 56b76bdf51f7708750eac80fa38b952bb9f32639
+- name: github.com/rightscale/rslog
+  version: 92fa4a95e325b9cb265cf1f4cbee2358a0cd656f
+- name: github.com/valyala/fasttemplate
+  version: 3b874956e03f1636d171bda64b130f9135f42cff
+- name: golang.org/x/sys
+  version: 62bee037599929a6e9146f29d10dd5208c43507d
+  subpackages:
+  - unix
+- name: gopkg.in/alecthomas/kingpin.v1
+  version: 45f9714aa86a9624491adeaab1e9df1baf84dd38
+- name: gopkg.in/inconshreveable/log15.v2
+  version: b105bd37f74e5d9dc7b6ad7806715c7a2b83fd3f
+  subpackages:
+  - stack
+  - term
+devImports: []
