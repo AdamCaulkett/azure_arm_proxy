@@ -3,7 +3,6 @@ package resources
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"strings"
 
 	"github.com/labstack/echo"
@@ -160,7 +159,6 @@ func (r *Route) GetResponseParams() interface{} {
 // GetPath returns full path to the sigle route
 func (r *Route) GetPath(subscription string) string {
 	rr := fmt.Sprintf("%s/subscriptions/%s/resourceGroups/%s/%s/%s/routes/%s?api-version=%s", config.BaseURL, subscription, r.createParams.Group, routeTablePath, r.createParams.RouteTableName, r.createParams.Name, microsoftNetworkApiVersion)
-	log.Printf("Path: %s\n", rr)
 	return rr
 }
 

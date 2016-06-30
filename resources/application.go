@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
 	"net/http"
 
 	"code.google.com/p/go-uuid/uuid"
@@ -48,8 +47,8 @@ func assignRoleToApp(c *echo.Context) error {
 	}
 
 	path := fmt.Sprintf("%s/subscriptions/%s/providers/microsoft.authorization/roleassignments/%s?api-version=%s", config.BaseURL, subscription, name, "2014-10-01-preview")
-	log.Printf("Assign RBAC role to Application with params: %s\n", properties)
-	log.Printf("Assign RBAC role to Application path: %s\n", path)
+	config.Logger.Info("Assign RBAC role to Application with params:", properties)
+	config.Logger.Info("Assign RBAC role to Application path: ", path)
 
 	by, err := json.Marshal(properties)
 	if err != nil {
@@ -96,7 +95,7 @@ func unassignRoleFromApp(c *echo.Context) error {
 		return err
 	}
 	path := fmt.Sprintf("%s/subscriptions/%s/providers/microsoft.authorization/roleassignments/%s?api-version=%s", config.BaseURL, subscription, name, "2014-10-01-preview")
-	log.Printf("Unassign RBAC role from Application path: %s\n", path)
+	config.Logger.Info("Unassign RBAC role from Application path: ", path)
 
 	req, err := http.NewRequest("DELETE", path, nil)
 	req.Header.Add("User-Agent", config.UserAgent)
@@ -161,7 +160,7 @@ func prepareParams(c *echo.Context) (string, string, error) {
 func getServicePrincipal(client *http.Client, creds *am.Credentials) (string, error) {
 	path := fmt.Sprintf("%s/%s/servicePrincipals?api-version=1.5", config.GraphURL, creds.TenantID)
 	path = path + "&$filter=appId%20eq%20'" + creds.ClientID + "'"
-	log.Printf("Get Service Principals request: %s\n", path)
+	config.Logger.Info("Get Service Principals request: ", path)
 	resp, err := client.Get(path)
 	defer resp.Body.Close()
 	if err != nil {

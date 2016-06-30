@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 
 	"github.com/labstack/echo"
 	"github.com/rightscale/azure_arm_proxy/config"
@@ -101,7 +100,7 @@ func registerProvider(c *echo.Context) error {
 	provider.HandleResponse(c, body, "")
 
 	if provider.responseParams.RegistrationState == "NotRegistered" {
-		log.Printf("Register required: \n")
+		config.Logger.Info("Register required:")
 		client, err := GetAzureClient(c)
 		if err != nil {
 			return err
@@ -111,7 +110,7 @@ func registerProvider(c *echo.Context) error {
 			return err
 		}
 		path := fmt.Sprintf("%s/subscriptions/%s/providers/%s/register?api-version=%s", config.BaseURL, creds.Subscription, provider.Name, providerAPIVersion)
-		log.Printf("Registering Provider %s: %s\n", provider.Name, path)
+		config.Logger.Info("Registering Provider ", provider.Name, "Path", path)
 		resp, err := client.PostForm(path, nil)
 		if err != nil {
 			return eh.GenericException(fmt.Sprintf("Error has occurred while registering provider: %v", err))

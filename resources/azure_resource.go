@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"strings"
 
@@ -105,7 +104,7 @@ func Delete(c *echo.Context, r AzureResource) error {
 		return err
 	}
 	path := r.GetPath(creds.Subscription)
-	log.Printf("Delete request: %s\n", path)
+	config.Logger.Info("Delete request:", path)
 
 	req, err := http.NewRequest("DELETE", path, nil)
 	if err != nil {
@@ -127,7 +126,7 @@ func Delete(c *echo.Context, r AzureResource) error {
 
 	//https://msdn.microsoft.com/en-us/library/azure/mt163601.aspx
 	if resp.Header.Get("Location") != "" {
-		log.Printf("Location: %s\n", resp.Header.Get("Location"))
+		config.Logger.Info("Location:", resp.Header.Get("Location"))
 		array := strings.Split(resp.Header.Get("Location"), "/")
 		operationId := strings.Split(array[len(array)-1], "?")[0]
 		c.Response().Header().Add("OperationId", operationId)
@@ -180,7 +179,7 @@ func GetResources(c *echo.Context, path string) ([]map[string]interface{}, error
 	if err != nil {
 		return nil, err
 	}
-	log.Printf("Get Resources request: %s\n", path)
+	config.Logger.Info("Get Resources request:", path)
 	resp, err := client.Get(path)
 	defer resp.Body.Close()
 	if err != nil {
@@ -218,7 +217,7 @@ func GetResource(c *echo.Context, path string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	log.Printf("Get Resource request: %s\n", path)
+	config.Logger.Info("Get Resource request:", path)
 	resp, err := client.Get(path)
 	defer resp.Body.Close()
 	if err != nil {
