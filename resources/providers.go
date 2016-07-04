@@ -110,7 +110,7 @@ func registerProvider(c *echo.Context) error {
 			return err
 		}
 		path := fmt.Sprintf("%s/subscriptions/%s/providers/%s/register?api-version=%s", config.BaseURL, creds.Subscription, provider.Name, providerAPIVersion)
-		config.Logger.Info("Registering Provider ", provider.Name, "Path", path)
+		config.Logger.Info("Registering Provider ", provider.Name, path)
 		resp, err := client.PostForm(path, nil)
 		if err != nil {
 			return eh.GenericException(fmt.Sprintf("Error has occurred while registering provider: %v", err))

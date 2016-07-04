@@ -104,7 +104,7 @@ func Delete(c *echo.Context, r AzureResource) error {
 		return err
 	}
 	path := r.GetPath(creds.Subscription)
-	config.Logger.Info("Delete request:", path)
+	config.Logger.Info("Delete request:", "path", path)
 
 	req, err := http.NewRequest("DELETE", path, nil)
 	if err != nil {
@@ -126,7 +126,7 @@ func Delete(c *echo.Context, r AzureResource) error {
 
 	//https://msdn.microsoft.com/en-us/library/azure/mt163601.aspx
 	if resp.Header.Get("Location") != "" {
-		config.Logger.Info("Location:", resp.Header.Get("Location"))
+		config.Logger.Info("Header:", "Location", resp.Header.Get("Location"))
 		array := strings.Split(resp.Header.Get("Location"), "/")
 		operationId := strings.Split(array[len(array)-1], "?")[0]
 		c.Response().Header().Add("OperationId", operationId)
@@ -179,7 +179,7 @@ func GetResources(c *echo.Context, path string) ([]map[string]interface{}, error
 	if err != nil {
 		return nil, err
 	}
-	config.Logger.Info("Get Resources request:", path)
+	config.Logger.Info("Get Resources request:", "path", path)
 	resp, err := client.Get(path)
 	defer resp.Body.Close()
 	if err != nil {
@@ -217,7 +217,7 @@ func GetResource(c *echo.Context, path string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	config.Logger.Info("Get Resource request:", path)
+	config.Logger.Info("Get Resource request:", "path", path)
 	resp, err := client.Get(path)
 	defer resp.Body.Close()
 	if err != nil {

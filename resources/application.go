@@ -47,8 +47,8 @@ func assignRoleToApp(c *echo.Context) error {
 	}
 
 	path := fmt.Sprintf("%s/subscriptions/%s/providers/microsoft.authorization/roleassignments/%s?api-version=%s", config.BaseURL, subscription, name, "2014-10-01-preview")
-	config.Logger.Info("Assign RBAC role to Application with params:", properties)
-	config.Logger.Info("Assign RBAC role to Application path: ", path)
+	config.Logger.Info("Assign RBAC role to Application with params:", "properties", properties)
+	config.Logger.Info("Assign RBAC role to Application path: ", "path", path)
 
 	by, err := json.Marshal(properties)
 	if err != nil {
@@ -95,7 +95,7 @@ func unassignRoleFromApp(c *echo.Context) error {
 		return err
 	}
 	path := fmt.Sprintf("%s/subscriptions/%s/providers/microsoft.authorization/roleassignments/%s?api-version=%s", config.BaseURL, subscription, name, "2014-10-01-preview")
-	config.Logger.Info("Unassign RBAC role from Application path: ", path)
+	config.Logger.Info("Unassign RBAC role from Application path: ", "path", path)
 
 	req, err := http.NewRequest("DELETE", path, nil)
 	req.Header.Add("User-Agent", config.UserAgent)
@@ -160,7 +160,7 @@ func prepareParams(c *echo.Context) (string, string, error) {
 func getServicePrincipal(client *http.Client, creds *am.Credentials) (string, error) {
 	path := fmt.Sprintf("%s/%s/servicePrincipals?api-version=1.5", config.GraphURL, creds.TenantID)
 	path = path + "&$filter=appId%20eq%20'" + creds.ClientID + "'"
-	config.Logger.Info("Get Service Principals request: ", path)
+	config.Logger.Info("Get Service Principals request: ", "path", path)
 	resp, err := client.Get(path)
 	defer resp.Body.Close()
 	if err != nil {
