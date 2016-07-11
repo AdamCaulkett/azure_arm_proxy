@@ -9,6 +9,7 @@ RUN tar zxvf /srv/azure_arm_proxy/binary/azure_v2-linux-amd64.tgz
 EXPOSE 8083
 CMD ["web"]
 ENTRYPOINT ["./entrypoint.sh"]
+USER www-data
 
 ARG gitref=unknown
 LABEL git.ref=${gitref}
