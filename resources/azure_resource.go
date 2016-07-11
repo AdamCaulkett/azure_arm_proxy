@@ -179,7 +179,7 @@ func GetResources(c *echo.Context, path string) ([]map[string]interface{}, error
 	if err != nil {
 		return nil, err
 	}
-	config.Logger.Info("Get Resources request:", "path", path)
+	config.Logger.Debug("Get Resources request:", "path", path)
 	resp, err := client.Get(path)
 	defer resp.Body.Close()
 	if err != nil {
